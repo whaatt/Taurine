@@ -1,0 +1,26 @@
+Garuda API
+
+{success : true | false, <data | error>}
+
+POST api/user
+    about: create 
+    in: {username, password, email, name}
+    data: {<default>}
+    error:
+        - username too long or short (4 <> 20)
+        - password too long or short (8 <> 40)
+        - email too long or short (6 <> 100)
+        - name too long or short (1 <> 100)
+        - TODO: charset limitations
+        
+POST api/user/login
+    in: {username, password}
+    data: {<default>}
+    error:
+        - improper credentials
+
+POST api/user/forgot
+    in: {email, <username>}
+    data: {<default>}
+    error:
+        - 
