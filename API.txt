@@ -1,6 +1,6 @@
 Garuda API
 
-{success : true | false, <data | error>}
+{success : true | false, code : 200 | 404 | 403, <data | error>}
 
 POST api/user
     about: create 
@@ -23,4 +23,3 @@ POST api/user/forgot
     in: {email, <username>}
     data: {<default>}
     error:
-        - 
