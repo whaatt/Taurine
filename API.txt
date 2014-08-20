@@ -1,25 +1,380 @@
 Garuda API
 
-{success : true | false, code : 200 | 404 | 403, <data | error>}
+default : {disposition : {success : true | false, code : 200 | 404 | 403}, <data | error>}
+at the same time, however, we might just want to return the pertinent object on PUT or POST
+on the other hand, maybe it's better if everything is reflected via manual queried updates
 
-POST api/user
-    about: create 
+GET /:<anything not below>
+    about: get the main app page
+    in: nothing
+    data: return the main app page
+    
+POST /api/user
+    about: create new user
     in: {username, password, email, name}
     data: {<default>}
     error:
+        - missing parameters (all required)
         - username too long or short (4 <> 20)
         - password too long or short (8 <> 40)
         - email too long or short (6 <> 100)
         - name too long or short (1 <> 100)
-        - TODO: charset limitations
+        - limit to visible ASCII charset?
+        - user with username already exists
+        - current user logged in
+
+GET /api/user/confirm/:CID
+    about: confirm a user registration
+    in: {}
+    data: {<default>}
+    error:
+        - CID does not exist
+        - already confirmed
         
-POST api/user/login
+POST /api/user/login
+    about: login with credentials
     in: {username, password}
     data: {<default>}
     error:
+        - missing parameters
         - improper credentials
+        - user not confirmed yet
+        - current user logged in
 
-POST api/user/forgot
+POST /api/user/logout
+    about: log out of site
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated
+        
+POST /api/user/forgot
+    about: forgot your password or username
     in: {email, <username>}
     data: {<default>}
     error:
+        - missing parameter
+        - no such email on file
+        - current user logged in
+
+GET /api/user
+    about: get your basic info
+    in: {}
+    data: {<default>, data : {username, email, name}}
+    error:
+        - not authenticated
+        
+POST /api/user/edit
+    about: edit your own basic info
+    in: {<name>, <email>, <oldPassword, newPassword, confirm>}
+    data: {<default>}
+    error:
+        - not authenticated
+
+GET /api/sets/
+    about: get basic set information (ID/name/creation/date/director/access)
+    in: {}
+    data: {<default>, data : [setInfo]}
+    error:
+        - not authenticated
+
+POST /api/sets
+    about: create new packet set
+    in: {name, password, target, info <markdown?>, 
+        subjects : [{subject : [TU, B] <zero default>}...], 
+        config : {tossups, bonuses, packets}, 
+        schema : ACF | NSB | RCSB | RCQB, visibility}
+    data: {<default>}
+    error:
+        - not authenticated
+        - missing/malformed parameters
+        - name too long or short (1 <> 200?)
+        - password too long or short (8 <> 40?)
+        - target not a valid date <is this actually an error?>
+        - info too long (1000?)
+        - subject name too long (50?)
+        - if config settings are not positive integers, default to zero
+        - if subject numbers are not rational numbers to two decimal points max, default to zero
+        
+POST /api/sets/join
+    about: join a particular packet set
+    in: {setID, password}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - password incorrect
+
+PUT /api/sets/:ID
+    about: edit a particular packet set
+    in: {<name, password, target, info <markdown?>,
+        subjects : [{subject : [TU, B] <zero default>}...], 
+        config : {tossups, bonuses, packets}, 
+        schema : ACF | NSB | RCSB | RCQB, visibility>}
+    data: {<default>}
+    error:
+        - see POST /api/sets
+        - no unique errors?
+        
+GET /api/sets/:ID
+    about: get complete information for a set
+    in: {}
+    data: {<default>, data : {name, password, director, creation, target, info <markdown?>, subjects, config, schema, visibility}}
+    error:
+        - not authenticated
+        - no permissions for set
+        - <codes> only returns with director or administrator permissions
+
+DELETE /api/sets/:ID
+    about: completely delete a set (TBD: do I erase all pertinent data)
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no administrator permissions for set
+        
+GET /api/sets/:ID/role
+    about: get your role for a given set (director/administrator/editor/writer)
+    in: {}
+    data: {<default>, data : {role}}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        
+GET /api/sets/:ID/schema
+    about: get schema type for a given set (ACF/NSB/RCQB/RCSB)
+    in: {}
+    data: {<default>, data : {schema}}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+
+GET /api/sets/:ID/subjects
+    about: get the subjects for a given set
+    in: {}
+    data: {<default>, data : {subjects : [{subject : [TU, B] <zero default>}...}}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        
+GET /api/sets/:ID/members
+    about: get all members belonging to a given set
+    in: {}
+    data: {<default>, data : [{name, username, role, [subjects]}...]}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        
+PUT /api/sets/:ID/members/:MID
+    about: set the role or subject foci of a given user
+    in: {role || [subjects]}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        - role is not admin or director
+        - user is not part of set
+
+TODO: GET /api/sets/:ID/stats
+    about: get statistics for a given set
+    in: {}
+    data: {<default>, data : (TBD)}
+    error: TBD
+
+TODO: Import (inc. ACF)
+TODO: Duplicate Search
+TODO: Notifications
+
+GET /api/sets/:ID/tossups
+    about: get a list of tossups (ID/<tossup>/answer/difficulty/approved/duplicate/creator/editor/flagState)
+    in: {}
+    data: {<default>, data: [tossupInfo]}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+
+GET /api/sets/:ID/tossups/:TID
+    about: get a specific tossup
+    in: {}
+    data: {<default>, data: {tossupInfo}}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+
+POST /api/sets/:ID/tossups
+    about: create tossups for a given set
+    in: {subject, difficulty, question, answer}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+
+PUT /api/sets/:ID/tossups/:TID
+    about: edit a given tossup
+    in: {subject, difficulty, question, answer, approved, duplicate}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        - not creator of question
+        - not editor or administrator
+        - not ed or admin and approving
+
+DELETE /api/sets/:ID/tossups/:TID
+    about: delete a given tossup
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        - not creator of question
+        - not editor or administrator
+
+POST /api/sets/:ID/tossups/:TID/message
+    about: leave a message and notify users with flags
+    in: {message}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        
+DELETE /api/sets/:ID/tossups/:TID/message/:MID
+    about: delete a message
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        - [not creator of question]?
+        - not editor or administrator
+
+GET /api/sets/:ID/bonuses
+    about: get a list of bonuses (ID/<questions>/answers/difficulty/approved/duplicate/creator/editor/flagState)
+    in: {}
+    data: {<default>, data: [bonusInfo]}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+
+GET /api/sets/:ID/bonuses/:BID
+    about: get a specific bonus
+    in: {}
+    data: {<default>, data: {bonusInfo}}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        
+POST /api/sets/:ID/bonuses
+    about: create bonuses for a given set
+    in: {subject, difficulty, lead, questions : [question...], answers : [answer...]}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        - contains fields erroneous to schema
+
+PUT /api/sets/:ID/bonuses/:BID
+    about: edit a given bonus
+    in: {subject, difficulty, lead, questions : [question...], answers : [answer...], approved, duplicate}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        - not creator of question
+        - not editor or administrator
+        - not ed or admin and approving
+        - contains fields erroneous to schema
+
+DELETE /api/sets/:ID/bonuses/:BID
+    about: delete a given bonus
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        - not creator of question
+        - not editor or administrator
+
+POST /api/sets/:ID/bonuses/:BID/message
+    about: leave a message and notify users with flags
+    in: {message}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+
+DELETE /api/sets/:ID/bonuses/:BID/message/:MID
+    about: delete a message
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        - [not creator of question]?
+        - not editor or administrator
+
+POST /api/sets/:ID/packets
+    about: generate packets
+    in: {tossups, bonuses, packets, subjects, overwrite, addToExisting}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - not administrator
+
+GET /api/sets/:ID/packets
+    about: get generated packets in JSON form
+    in: {}
+    data: {<default>, data : {packets : [{tossups : [questionID...], bonuses : [questionID...]}...],
+        questions : {tossups : [{ID : info}...], bonuses : [{ID : info}...]}}}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+
+GET /sets/:ID/packets/:PID || /sets/:ID/packets/:PID/HTML
+    about: return HTML page of formatted packet
+    in: {}
+    data: see about
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+
+GET /sets/:ID/packets/:PID/PDF
+    about: return PDF file of formatted packet
+    in: {}
+    data: see about
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+
+GET /sets/:ID/packets/:PID/DOC
+    about: return DOC file of formatted packet
+    in: {}
+    data: see about
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set

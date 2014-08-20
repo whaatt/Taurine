@@ -1,0 +1,31 @@
+question schemas 
+
+    ACF Quiz Bowl
+    DOE Science Bowl
+    RCHS Science Bowl
+    RCHS Quiz Bowl
+    
+question schemas define:
+    
+    - packet formatting
+    - fields used for writing
+    - helpful hints here and there
+    
+Geography - 3/3
+Math - 0.5/1
+etc...
+
+TU/Packet: 24
+B/Packet: 24
+Packets: 12
+
+Databases:
+- Users
+- Sets
+- Flags
+- Counters
+- Messages
+- Permissions
+- Subjects
+- Tossups
+- Bonuses
