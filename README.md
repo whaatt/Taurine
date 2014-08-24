@@ -8,10 +8,10 @@ A New Collaborative Quiz Bowl Packet Editor
 - Probably filled with bugs galore.
 
 ### Credits
-I'd like to thank my Quiz Bowl teammates and coaches for their tireless usage,
-feedback, comments, and criticism. It's not always easy trying untested software
-in a production environment. I'd also like to thank Charles Hang for offering
-several usability suggestions along the way.
+I'd like to thank my Quiz Bowl teammates and coaches for their tireless usage and
+constructive criticism; it's not always easy trying untested software in a production
+environment. I'd also like to thank Charles Hang for offering several usability
+suggestions along the way.
 
 ### The Name
 NAQT's famed packet editor for internal use is called Ginseng. Since this vainly
