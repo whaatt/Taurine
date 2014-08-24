@@ -1,0 +1,35 @@
+{
+  "name": "Guarana",
+  "version": "0.0.0",
+  "description": "An effective way to write and edit QB questions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/whaatt/Guarana.git"
+  },
+  "keywords": [
+    "QB",
+    "Guarana"
+  ],
+  "author": "Sanjay Kannan",
+  "license": "Tautology",
+  "bugs": {
+    "url": "https://github.com/whaatt/Guarana/issues"
+  },
+  "homepage": "https://github.com/whaatt/Guarana",
+  "dependencies": {
+    "body-parser": "^1.6.5",
+    "express": "^4.8.5",
+    "express-session": "^1.7.6",
+    "nedb": "^0.11.0",
+    "nodemailer": "^1.2.1",
+    "underscore": "^1.6.0",
+    "validator": "^3.17.0"
+  },
+  "root": "http://www.guarana.cf",
+  "admin": "Guarana Support",
+  "email": "admin@skalon.com"
+}

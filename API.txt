@@ -1,6 +1,6 @@
 Garuda API
 
-default : {disposition : {success : true | false, code : 200 | 404 | 403}, <data | error>}
+default : {success : true | false, code : 200 | 404 | 403, <data | error>}
 at the same time, however, we might just want to return the pertinent object on PUT or POST
 on the other hand, maybe it's better if everything is reflected via manual queried updates
 
@@ -105,7 +105,7 @@ POST /api/sets/join
         - set does not exist
         - password incorrect
 
-PUT /api/sets/:ID
+PUT /api/sets/:SID
     about: edit a particular packet set
     in: {<name, password, target, info <markdown?>,
         subjects : [{subject : [TU, B] <zero default>}...], 
@@ -116,7 +116,7 @@ PUT /api/sets/:ID
         - see POST /api/sets
         - no unique errors?
         
-GET /api/sets/:ID
+GET /api/sets/:SID
     about: get complete information for a set
     in: {}
     data: {<default>, data : {name, password, director, creation, target, info <markdown?>, subjects, config, schema, visibility}}
@@ -125,7 +125,7 @@ GET /api/sets/:ID
         - no permissions for set
         - <codes> only returns with director or administrator permissions
 
-DELETE /api/sets/:ID
+DELETE /api/sets/:SID
     about: completely delete a set (TBD: do I erase all pertinent data)
     in: {}
     data: {<default>}
@@ -134,7 +134,7 @@ DELETE /api/sets/:ID
         - set does not exist
         - no administrator permissions for set
         
-GET /api/sets/:ID/role
+GET /api/sets/:SID/role
     about: get your role for a given set (director/administrator/editor/writer)
     in: {}
     data: {<default>, data : {role}}
@@ -143,7 +143,7 @@ GET /api/sets/:ID/role
         - set does not exist
         - no permissions for set
         
-GET /api/sets/:ID/schema
+GET /api/sets/:SID/schema
     about: get schema type for a given set (ACF/NSB/RCQB/RCSB)
     in: {}
     data: {<default>, data : {schema}}
@@ -152,7 +152,7 @@ GET /api/sets/:ID/schema
         - set does not exist
         - no permissions for set
 
-GET /api/sets/:ID/subjects
+GET /api/sets/:SID/subjects
     about: get the subjects for a given set
     in: {}
     data: {<default>, data : {subjects : [{subject : [TU, B] <zero default>}...}}
@@ -161,7 +161,7 @@ GET /api/sets/:ID/subjects
         - set does not exist
         - no permissions for set
         
-GET /api/sets/:ID/members
+GET /api/sets/:SID/members
     about: get all members belonging to a given set
     in: {}
     data: {<default>, data : [{name, username, role, [subjects]}...]}
@@ -170,7 +170,7 @@ GET /api/sets/:ID/members
         - set does not exist
         - no permissions for set
         
-PUT /api/sets/:ID/members/:MID
+PUT /api/sets/:SID/members/:MID
     about: set the role or subject foci of a given user
     in: {role || [subjects]}
     data: {<default>}
@@ -181,7 +181,7 @@ PUT /api/sets/:ID/members/:MID
         - role is not admin or director
         - user is not part of set
 
-TODO: GET /api/sets/:ID/stats
+TODO: GET /api/sets/:SID/stats
     about: get statistics for a given set
     in: {}
     data: {<default>, data : (TBD)}
@@ -190,8 +190,9 @@ TODO: GET /api/sets/:ID/stats
 TODO: Import (inc. ACF)
 TODO: Duplicate Search
 TODO: Notifications
+TODO: User Global Stats
 
-GET /api/sets/:ID/tossups
+GET /api/sets/:SID/tossups
     about: get a list of tossups (ID/<tossup>/answer/difficulty/approved/duplicate/creator/editor/flagState)
     in: {}
     data: {<default>, data: [tossupInfo]}
@@ -200,7 +201,7 @@ GET /api/sets/:ID/tossups
         - set does not exist
         - no permissions for set
 
-GET /api/sets/:ID/tossups/:TID
+GET /api/sets/:SID/tossups/:TID
     about: get a specific tossup
     in: {}
     data: {<default>, data: {tossupInfo}}
@@ -209,7 +210,7 @@ GET /api/sets/:ID/tossups/:TID
         - set does not exist
         - no permissions for set
 
-POST /api/sets/:ID/tossups
+POST /api/sets/:SID/tossups
     about: create tossups for a given set
     in: {subject, difficulty, question, answer}
     data: {<default>}
@@ -218,7 +219,7 @@ POST /api/sets/:ID/tossups
         - set does not exist
         - no permissions for set
 
-PUT /api/sets/:ID/tossups/:TID
+PUT /api/sets/:SID/tossups/:TID
     about: edit a given tossup
     in: {subject, difficulty, question, answer, approved, duplicate}
     data: {<default>}
@@ -230,7 +231,7 @@ PUT /api/sets/:ID/tossups/:TID
         - not editor or administrator
         - not ed or admin and approving
 
-DELETE /api/sets/:ID/tossups/:TID
+DELETE /api/sets/:SID/tossups/:TID
     about: delete a given tossup
     in: {}
     data: {<default>}
@@ -241,7 +242,7 @@ DELETE /api/sets/:ID/tossups/:TID
         - not creator of question
         - not editor or administrator
 
-POST /api/sets/:ID/tossups/:TID/message
+POST /api/sets/:SID/tossups/:TID/message
     about: leave a message and notify users with flags
     in: {message}
     data: {<default>}
@@ -250,7 +251,7 @@ POST /api/sets/:ID/tossups/:TID/message
         - set does not exist
         - no permissions for set
         
-DELETE /api/sets/:ID/tossups/:TID/message/:MID
+DELETE /api/sets/:SID/tossups/:TID/message/:MID
     about: delete a message
     in: {}
     data: {<default>}
@@ -261,8 +262,8 @@ DELETE /api/sets/:ID/tossups/:TID/message/:MID
         - [not creator of question]?
         - not editor or administrator
 
-GET /api/sets/:ID/bonuses
-    about: get a list of bonuses (ID/<questions>/answers/difficulty/approved/duplicate/creator/editor/flagState)
+GET /api/sets/:SID/bonuses
+    about: get a list of bonuses (ID/lead/<questions>/answers/difficulty/approved/duplicate/creator/editor/flagState)
     in: {}
     data: {<default>, data: [bonusInfo]}
     error:
@@ -270,7 +271,7 @@ GET /api/sets/:ID/bonuses
         - set does not exist
         - no permissions for set
 
-GET /api/sets/:ID/bonuses/:BID
+GET /api/sets/:SID/bonuses/:BID
     about: get a specific bonus
     in: {}
     data: {<default>, data: {bonusInfo}}
@@ -279,7 +280,7 @@ GET /api/sets/:ID/bonuses/:BID
         - set does not exist
         - no permissions for set
         
-POST /api/sets/:ID/bonuses
+POST /api/sets/:SID/bonuses
     about: create bonuses for a given set
     in: {subject, difficulty, lead, questions : [question...], answers : [answer...]}
     data: {<default>}
@@ -289,7 +290,7 @@ POST /api/sets/:ID/bonuses
         - no permissions for set
         - contains fields erroneous to schema
 
-PUT /api/sets/:ID/bonuses/:BID
+PUT /api/sets/:SID/bonuses/:BID
     about: edit a given bonus
     in: {subject, difficulty, lead, questions : [question...], answers : [answer...], approved, duplicate}
     data: {<default>}
@@ -302,7 +303,7 @@ PUT /api/sets/:ID/bonuses/:BID
         - not ed or admin and approving
         - contains fields erroneous to schema
 
-DELETE /api/sets/:ID/bonuses/:BID
+DELETE /api/sets/:SID/bonuses/:BID
     about: delete a given bonus
     in: {}
     data: {<default>}
@@ -313,7 +314,7 @@ DELETE /api/sets/:ID/bonuses/:BID
         - not creator of question
         - not editor or administrator
 
-POST /api/sets/:ID/bonuses/:BID/message
+POST /api/sets/:SID/bonuses/:BID/message
     about: leave a message and notify users with flags
     in: {message}
     data: {<default>}
@@ -322,7 +323,7 @@ POST /api/sets/:ID/bonuses/:BID/message
         - set does not exist
         - no permissions for set
 
-DELETE /api/sets/:ID/bonuses/:BID/message/:MID
+DELETE /api/sets/:SID/bonuses/:BID/message/:MID
     about: delete a message
     in: {}
     data: {<default>}
@@ -333,7 +334,7 @@ DELETE /api/sets/:ID/bonuses/:BID/message/:MID
         - [not creator of question]?
         - not editor or administrator
 
-POST /api/sets/:ID/packets
+POST /api/sets/:SID/packets
     about: generate packets
     in: {tossups, bonuses, packets, subjects, overwrite, addToExisting}
     data: {<default>}
@@ -342,7 +343,7 @@ POST /api/sets/:ID/packets
         - set does not exist
         - not administrator
 
-GET /api/sets/:ID/packets
+GET /api/sets/:SID/packets
     about: get generated packets in JSON form
     in: {}
     data: {<default>, data : {packets : [{tossups : [questionID...], bonuses : [questionID...]}...],
@@ -352,7 +353,9 @@ GET /api/sets/:ID/packets
         - set does not exist
         - no permissions for set
 
-GET /sets/:ID/packets/:PID || /sets/:ID/packets/:PID/HTML
+<expose API hook to get specific packet?>
+
+GET /sets/:SID/packets/:PID || /sets/:SID/packets/:PID/HTML
     about: return HTML page of formatted packet
     in: {}
     data: see about
@@ -360,7 +363,7 @@ GET /sets/:ID/packets/:PID || /sets/:ID/packets/:PID/HTML
         - not authenticated
         - set does not exist
         - no permissions for set
-
+        
 GET /sets/:ID/packets/:PID/PDF
     about: return PDF file of formatted packet
     in: {}

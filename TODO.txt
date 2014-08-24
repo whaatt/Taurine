@@ -1,3 +1,21 @@
+1. Write helper functions.
+2. Write controllers.
+3. Write front-end HTML.
+4. Write front-end JS.
+5. Add extra features.
+
+installing on a custom server
+
+    - Edit /helpers/confirm.js to match transport.
+    - Make sure /data is empty to begin with.
+    - Edit name in package.json if you wish.
+    - Edit:
+        Guarana root
+        Admin name
+        Admin email
+      in package.json to match your site.
+    - Enjoy!
+
 question schemas 
 
     ACF Quiz Bowl
@@ -19,13 +37,23 @@ TU/Packet: 24
 B/Packet: 24
 Packets: 12
 
-Databases:
+Database:
 - Users
+    {ID, username, password, temporary, email, name, confirmed} 
 - Sets
-- Flags
-- Counters
-- Messages
-- Permissions
+    {ID, name, password, info, creationDate, targetDate, directorID, subjects, config, schema, visibility}
 - Subjects
+    {ID, setID, subject, countTU, countB}
+- Permissions
+    {ID, setID, userID, role}
 - Tossups
+    {ID, setID, subjectID, difficulty, question, answer, approved, duplicates}
 - Bonuses
+    {ID, setID, subjectID, difficulty, lead, questions, answers, approved, duplicates}
+- Messages
+    {ID, userID, type, setID, questionID, message, date}
+- Flags
+    {ID, userID, type, setID, questionID}
+- Notifications
+    {ID, type, setID, questionType, questionID, userID, editorID}
+- Counters
