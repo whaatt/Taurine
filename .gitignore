@@ -15,6 +15,7 @@ $RECYCLE.BIN/
 *.msp
 
 node_modules
+data
 
 # =========================
 # Operating System Files

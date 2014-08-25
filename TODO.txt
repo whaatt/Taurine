@@ -3,6 +3,7 @@
 3. Write front-end HTML.
 4. Write front-end JS.
 5. Add extra features.
+6. Rate limiting.
 
 installing on a custom server
 

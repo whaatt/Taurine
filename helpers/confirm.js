@@ -20,8 +20,8 @@ module.exports = {
         //change the name in the package file as needed
         var subject = 'Confirm ' + appName + ' Registration';
         
-        var textPath = '../views/mail/text.txt';
-        var richPath = '../views/mail/rich.txt';
+        var textPath = __dirname + '/../views/mail/text.txt';
+        var richPath = __dirname + '/../views/mail/rich.txt';
         
         fs.readFile(textPath, 'utf8', function(error, data) {
             if (error) {

@@ -1,6 +1,6 @@
 var Handle = require('nedb');
 var fs = require('fs'); //read files
-var here = '..'; //relative
+var here = __dirname + '/..'; //relative
 
 //path to counters for automatic increment
 var counterPath = here + '/data/counters.db';
