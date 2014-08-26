@@ -37,15 +37,15 @@ else {
 
 module.exports = {
 
-    getNewID : function(table) {
+    getNewID : function(table, call) {
         counters.find({_id : table}, function(err, docs) {
-            if (err) { return false; }
-            if (docs.length === 0) { return false;}
+            if (err) { call(err); }
+            if (docs.length === 0) { call(err); }
             
             //increment the appropriate counter for the next call of getNewID()
             counters.update({_id : table}, {$inc : {counter : 1}}, function(err) {
-                if (err) { return false; }
-                return docs[0].counter;
+                if (err) { call(err) }
+                else { call(null, docs[0].counter); }
             });
         });
     },

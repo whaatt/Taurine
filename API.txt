@@ -1,6 +1,6 @@
 Garuda API
 
-default : {success : true | false, code : 200 | 404 | 403, <data | error>}
+default : {success : true | false, <data | error>}
 at the same time, however, we might just want to return the pertinent object on PUT or POST
 on the other hand, maybe it's better if everything is reflected via manual queried updates
 
@@ -11,19 +11,18 @@ GET /:<anything not below>
     
 POST /api/user
     about: create new user
-    in: {username, password, email, name}
+    in: {username, password, confirm, email, name}
     data: {<default>}
     error:
         - missing parameters (all required)
-        - username too long or short (4 <> 20)
+        - username too long or short (3 <> 20)
         - password too long or short (8 <> 40)
-        - email too long or short (6 <> 100)
-        - name too long or short (1 <> 100)
-        - limit to visible ASCII charset?
+        - email too long or short (6 <> 200)
+        - name too long or short (1 <> 60)
+        - username must be alphanumeric
         - user with username already exists
-        - current user logged in
 
-GET /api/user/confirm/:CID
+GET /api/user/confirm/:UID/:CID
     about: confirm a user registration
     in: {}
     data: {<default>}

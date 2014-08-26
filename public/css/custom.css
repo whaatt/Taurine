@@ -1,0 +1,23 @@
+/* remove ugly outlines */
+:focus, :active, :hover {
+    outline: 0 !important;
+    text-decoration: none !important;
+}
+
+body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-image: url(assets/images/stripe.gif);
+}
+
+.navbar-links {
+    overflow: hidden !important;
+}
+
+.storage {
+    display: none;
+}
+
+.navbar-links {
+    padding-right: 0px;
+}

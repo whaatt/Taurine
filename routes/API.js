@@ -19,7 +19,7 @@ var router = express.Router();
     /* User Routes */
     
         router.post('/user', user.create); //create a new user
-        router.get('/user/confirm/:CID', user.confirm); //confirm
+        router.get('/user/confirm/:UID/:CID', user.confirm); //confirm
         
         router.post('/user/login', user.login); //login user
         router.post('/user/logout', user.logout); //logout user

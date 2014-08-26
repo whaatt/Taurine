@@ -1,7 +1,6 @@
-module.exports = function(disposition, code, data) {
+module.exports = function(disposition, data) {
     return {
         'success' : disposition,
-        'code' : code,
         'data' : data
     }
 }

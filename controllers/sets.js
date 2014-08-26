@@ -4,10 +4,10 @@ var helpers = require('../helpers/index');
 var DB = helpers.DB; //brevity
 var validate = helpers.validate;
 var response = helpers.response;
-var error = helpers.error
+var error = helpers.error;
 
 //get subsidiary controllers
-var set = require('./sets/set')
+var set = require('./sets/set');
 
 module.exports = {
 

@@ -43,10 +43,10 @@ app.use('/sets', routes.packets);
 //unused subdirectory; our routing will
 //be handled primarily client-side
 
-app.use('*', function(req, res, next) {
+app.use('*', function(req, res) {
     newPath = req.params[0].split('/'); newPath.reverse(); //hacky
     staticPath = __dirname + '/public/' + newPath[1] + '/' + newPath[0];
-
+    
     //write tests for stupid hack
     if (fs.existsSync(staticPath)) {
         if (fs.statSync(staticPath).isDirectory()) {
