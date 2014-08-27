@@ -1,9 +1,10 @@
 /* Page Helpers */
 
-//process arrays of alerts
-function processAlerts(ctx, next) {
+//process various things
+//show alerts for example
+function process(ctx) {
     if (alerts.error.length > 0) {
-        addErrors(alerts.error, null);
+        _.each(alerts.error, addError);
     }
     
     if (alerts.success.length > 0) {
@@ -13,10 +14,12 @@ function processAlerts(ctx, next) {
     alerts.error = [];
     alerts.success = [];
     
-    //no route matched
-    if (matched !== true) {
-        next(); //default route
-    }
+    //this deals with the load flash
+    $('.container').removeClass('hide');
+    
+    
+    //turn off autocomplete globally
+    $('form').attr('autocomplete', 'off');
 }
 
 //figure out if user is logged in
@@ -25,11 +28,12 @@ function logState(ctx, next) {
         if ('errors' in reply.data &&
             $.inArray(reply.data.errors, 'notLoggedIn')){
             signed = false; //not signed in
+            delete state.user;
         }
         
         else {
             signed = true; //signed in
-            user = reply.data.username
+            state.user = reply.data;
         }
         
         //reset matched
@@ -43,8 +47,15 @@ function logState(ctx, next) {
 /* Page Handlers */
 
 function welcome(ctx, next) {
+    //no route matched
+    if (matched === true) {
+        next(); //skip to process
+        return false;
+    }
+    
     if (signed) {
-        //redirected
+        //no alert needed here
+        //this is the root route
         page('/dashboard');
         return false;
     }
@@ -129,8 +140,8 @@ function login(ctx, next) {
 
 function loginRedirect(ctx, next) {
     if (signed) {
-        alerts.error.push(errors.alreadyLoggedIn);
-        page('/dashboard'); return false;
+        alerts.success.push(success.redir);
+        page('/' + ctx.params.redir); return false;
     }
     
     setMenuContext('logged-out');
@@ -173,7 +184,7 @@ function dashboard(ctx, next) {
     }
 
     setMenuContext('logged-in');
-    setUsername(user);
+    setUsername(state.user.username);
 
     setContent('dashboard');
     setSidebar('dashboard');
@@ -183,9 +194,40 @@ function dashboard(ctx, next) {
     next(); //middleware
 }
 
+function account(ctx, next) {
+    if (!signed) {
+        alerts.error.push(errors.notLoggedIn);
+        page('/login' + ctx.pathname); return false;
+    }
+    
+    setMenuContext('logged-in');
+    setUsername(state.user.username);
+
+    setContent('account');
+    setSidebar('account');
+    setActiveMenuLink('account');
+    
+    $('#account-name').val(state.user.name);
+    $('#account-email').val(state.user.email);
+    
+    matched = true;
+    next(); //middleware
+}
+
 function logout(ctx, next) {
-    makePOST('/api/user/logout', {}, function(reply) {
+    makePOST('/api/user/logout', {}, function(reply) {    
+        setMenuContext('logged-out');
+        setUsername('Anonymous');
+        
+        setContent('welcome');
+        setSidebar('welcome');
+        setActiveMenuLink('welcome');
+        
         alerts.success.push(success.logout);
-        page('/'); return true; //home
+        signed = false; //not signed in
+        delete state.user; //user session
+        
+        matched = true;
+        next(); //middleware
     });
 }

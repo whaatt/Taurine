@@ -1,9 +1,9 @@
 /* Routes */
 
 //handy globals
+var state = {};
 var signed = false;
 var matched = false;
-var user = 'Anonymous';
 
 var alerts = {
     error : [],
@@ -22,13 +22,14 @@ page('/login/:redir(*)', loginRedirect);
 page('/confirm/:UID/:CID', confirm);
 
 page('/dashboard', dashboard);
+page('/account', account);
 page('/logout', logout); //only redirects
-
-//process alerts
-page(processAlerts);
 
 //default route
 page(welcome);
+
+//post process
+page(process);
 
 //normalize internal URLs to base
 $('[href]').each(function() {

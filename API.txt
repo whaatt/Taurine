@@ -70,10 +70,14 @@ GET /api/user
         
 POST /api/user/edit
     about: edit your own basic info
-    in: {<name>, <email>, <oldPassword, newPassword, confirm>}
+    in: {<name>, <email>, <newPassword, confirm>}
     data: {<default>}
     error:
-        - not authenticated
+        - not authenticated - errors : [notLoggedIn]
+        - no password confirmation - errors : [noConfirm]
+        - invalid params - errors : [parameter] + param
+        - malformed email - errors : [validMail]
+        - password and confirmation do not match : errors : [passwordConfirm]
 
 GET /api/sets/
     about: get basic set information (ID/name/creation/date/director/access)

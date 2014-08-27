@@ -6,6 +6,7 @@ module.exports = {
     duplicate : 'duplicate', //duplicate username
     mail : 'mail', //unknown mail error
     missingParams : 'missingParams', //missing parameters from request
+    noConfirm : 'noConfirm', //no password confirmation included
     notConfirmed : 'notConfirmed', //username has not been confirmed
     notLoggedIn : 'notLoggedIn', //user is not logged in
     noSuchConfirm : 'noSuchConfirm', //confirmation ID does not exist

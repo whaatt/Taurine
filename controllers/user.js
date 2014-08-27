@@ -234,19 +234,17 @@ module.exports = {
                                 req.session.authorized = true;
                                 req.session.ID = docs[0]['_id'];
                                 req.session.username = docs[0].username;
-                                
                                 res.status(200).send(response(true, {}));
-                                return true;
+                                
+                                DB.users.update({username : username}, {$unset : {temporary : true}}, function() {
+                                    //we do not care about the error here
+                                }); return true;
                             }
                             
                             else {
                                 res.status(200).send(response(false, {
                                     errors : [error.notConfirmed]
                                 }));
-                                
-                                DB.users.update({username : username}, {$unset : {temporary : true}}, function() {
-                                    //we do not care about the error here
-                                }); return true;
                             }
                         }
                         
@@ -423,7 +421,104 @@ module.exports = {
     },
     
     edit : function(req, res) {
-    
+        if (req.session.authorized !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.notLoggedIn]
+            })); return false;
+        }
+        
+        //add parameters
+        var update = {}
+        
+        if ('name' in req.body) {
+            if ((!validate.isLength(req.body.name, 1, 60))) {
+                res.status(200).send(response(false, {
+                    errors : [error.parameter],
+                    errorParams : ['name']
+                })); return false;
+            }
+            
+            else {
+                update.name = req.body.name;
+            }
+        }
+        
+        if ('email' in req.body) {
+            if (!validate.isLength(req.body.email, 6, 200)) {
+                res.status(200).send(response(false, {
+                    errors : [error.parameter],
+                    errorParams : ['email']
+                })); return false;
+            }
+            
+            else if (!validate.isEmail(req.body.email)) {
+                res.status(200).send(response(false, {
+                    errors : [error.validMail]
+                })); return false;
+            }
+            
+            else {
+                update.email = req.body.email;
+            }
+        }
+        
+        if ('password' in req.body && req.body.password !== '') {        
+            if (!validate.isLength(req.body.password, 8, 40)) {
+                res.status(200).send(response(false, {
+                    errors : [error.parameter],
+                    errorParams : ['password']
+                })); return false;
+            }
+            
+            else if (!('confirm' in req.body)) {
+                res.status(200).send(response(false, {
+                    errors : [error.noConfirm]
+                })); return false;
+            }
+            
+            else if (req.body.password !== req.body.confirm) {
+                res.status(200).send(response(false, {
+                    errors : [error.passwordConfirm]
+                })); return false;
+            }
+            
+            else {
+                update.password = req.body.password;
+                DB.hash(update.password, function(err, hash) {
+                    //get hashed password
+                    update.password = hash;
+                    
+                    DB.users.update({username : req.session.username}, {$set : update}, function(err, num) {
+                        if (err) {
+                            res.status(200).send(response(false, {
+                                errors : [error.database]
+                            })); return false;
+                        }
+                
+                        res.status(200).send(response(true, {
+                            name : update.name,
+                            email : update.email
+                        }));
+                    });
+                });
+            }
+        }
+        
+        else {
+            DB.users.update({username : req.session.username}, {$set : update}, function(err, num) {
+                if (err) {
+                    res.status(200).send(response(false, {
+                        errors : [error.database]
+                    })); return false;
+                }
+        
+                res.status(200).send(response(true, {
+                    name : update.name,
+                    email : update.email
+                }));
+            });
+        }
+        
     }
     
 }

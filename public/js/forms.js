@@ -67,3 +67,28 @@ $(document).on('submit', '#login-form', function(event) {
         }
     });
 });
+
+$(document).on('submit', '#account-form', function(event) {
+    event.preventDefault();
+    $('#account-button').prop('disabled', true);
+    
+    var request = {
+        name : $('#account-name').val(),
+        email : $('#account-email').val(),
+        password : $('#account-password').val(),
+        confirm : $('#account-confirm').val()
+    }
+    
+    makePOST('/api/user/edit', request, function(reply) {
+        if (!reply.success) {
+            addErrors(reply.data.errors, reply.data.errorParams);
+            $('#account-button').prop('disabled', false).blur();
+        }
+        
+        else {
+            addSuccess(success.account);
+            state.user.name = reply.name;
+            state.user.email = reply.email;
+        }
+    });
+});

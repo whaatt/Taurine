@@ -44,6 +44,19 @@
         </div>
       </div>
     </div><!-- /.dashboard -->
+    <div class="account">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          You may edit your account using the following form. I again encourage the usage of real names for all work associated with a given individual; this optional measure will decrease any potential confusion about your identity in the future. Usernames are currently not editable due to security issues.<br><br>
+          
+          <ul>
+            <li>Email: Must be a valid email between six and two hundred characters.</li>
+            <li>Password: Must be eight to forty characters of any type.</li>
+            <li>Name: Must be one to sixty characters of any type.</li>
+          </ul>
+        </div>
+      </div>
+    </div><!-- /.account -->
   </div>
   <div class="sidebars">
     <div class="welcome">
@@ -118,5 +131,26 @@
         </div>
       </div>
     </div><!-- /.dashboard -->
+    <div class="account">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <form id="account-form">
+            <div class="form-group">
+              <input type="text" class="form-control" id="account-name" placeholder="Edit your name.">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="account-email" placeholder="Edit your email.">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" id="account-password" placeholder="Enter your new password.">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control" id="account-confirm" placeholder="Confirm your new password.">
+            </div>
+            <button type="submit" class="btn btn-default btn-block" id="account-button">Edit Account</button>
+          </form>
+        </div>
+      </div>
+    </div><!-- /.account -->
   </div>
 </div>

@@ -4,6 +4,10 @@
     text-decoration: none !important;
 }
 
+/*.navbar, .panel, .alert {
+    border-radius: 0px !important;
+}*/
+
 body {
     padding-top: 20px;
     padding-bottom: 20px;
@@ -20,4 +24,16 @@ body {
 
 .navbar-links {
     padding-right: 0px;
+}
+
+.navbar a:focus {
+    color: #fff !important;
+}
+
+.navbar a:hover {
+    color: #18bc9c !important;
+}
+
+.panel {
+    border: 2px solid #555;
 }

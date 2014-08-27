@@ -6,6 +6,7 @@ var errors = {
     duplicate : 'That username is already taken! Please try again.',
     mail : 'An unknown mail error occurred. Please contact your system administrator.',
     missingParams : 'One or more parameters was missing from your request. Please try again.',
+    noConfirm : 'You must confirm your password. Please try again.',
     notConfirmed : 'This username has not been properly confirmed. Please check your email.',
     notLoggedIn : 'You must be logged in to access this resource. Please log in.',
     noSuchConfirm : 'No such confirmation ID exists. Please try again.',
@@ -16,6 +17,8 @@ var errors = {
 };
 
 var success = {
+    redir : 'You are already logged in.',
+    account : 'Your account information has been updated.',
     confirm : 'Your registration was successfully confirmed. You may now log in.',
     forgot : 'Please check your email for the information you requested.',
     login : 'You have successfully logged in.',
