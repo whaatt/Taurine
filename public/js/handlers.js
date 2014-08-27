@@ -1,9 +1,22 @@
 /* Page Helpers */
 
-//get forced to dashboard
-function dashForce(ctx) {
-    forceDash = true;
-    page('/dashboard');
+//process arrays of alerts
+function processAlerts(ctx, next) {
+    if (alerts.error.length > 0) {
+        addErrors(alerts.error, null);
+    }
+    
+    if (alerts.success.length > 0) {
+        _.each(alerts.success, addSuccess);
+    }
+    
+    alerts.error = [];
+    alerts.success = [];
+    
+    //no route matched
+    if (matched !== true) {
+        next(); //default route
+    }
 }
 
 //figure out if user is logged in
@@ -12,15 +25,15 @@ function logState(ctx, next) {
         if ('errors' in reply.data &&
             $.inArray(reply.data.errors, 'notLoggedIn')){
             signed = false; //not signed in
-            setMenuContext('logged-out');
-            setUsername('Anonymous');
         }
         
         else {
             signed = true; //signed in
-            setMenuContext('logged-in');
-            setUsername(reply.data.username);
+            user = reply.data.username
         }
+        
+        //reset matched
+        matched = false;
         
         //middle
         next();
@@ -29,77 +42,99 @@ function logState(ctx, next) {
 
 /* Page Handlers */
 
-function welcome(ctx) {
+function welcome(ctx, next) {
     if (signed) {
         //redirected
         page('/dashboard');
         return false;
     }
     
+    setMenuContext('logged-out');
+    setUsername('Anonymous');
+    
     setContent('welcome');
     setSidebar('welcome');
     setActiveMenuLink('welcome');
     
-    //must be after others
-    if (loggingOut === true) {
-        addSuccess(success.logout);
-        loggingOut = false; //reset state
-    }
+    matched = true;
+    next(); //middleware
 }
 
 //based on login page
-function confirm(ctx) {
+function confirm(ctx, next) {
     if (signed) {
-        //redirected
-        dashForce()
-        return false;
+        alerts.error.push(errors.alreadyLoggedIn);
+        page('/dashboard'); return false;
     }
     
     var UID = ctx.params.UID;
     var CID = ctx.params.CID;
-    page('/login');
     
-    makeGET('/api/user/confirm/' + UID + '/' + CID, function(reply) {
-        if (!reply.success) {
-            _.each(reply.data.errors, function(val){ addError(errors[val]); });
-        }
-        
-        else {
-            addSuccess(success.confirm);
-        }
-    });
-}
-
-function forgot(ctx) {
-    if (signed) {
-        //redirected
-        dashForce()
-        return false;
-    }
-    
-    setContent('forgot');
-    setSidebar('forgot');
-    setActiveMenuLink('forgot');
-}
-
-function login(ctx) {
-    if (signed) {
-        //redirected
-        dashForce()
-        return false;
-    }
+    setMenuContext('logged-out');
+    setUsername('Anonymous');
     
     setContent('login');
     setSidebar('login');
     setActiveMenuLink('login');
+    
+    makeGET('/api/user/confirm/' + UID + '/' + CID, function(reply) {
+        if (!reply.success) {
+            _.each(reply.data.errors, function(val){
+                alerts.error.push(errors[val]);
+            });
+        }
+        
+        else {
+            alerts.success.push(success.confirm);
+        }
+        
+        matched = true;
+        next(); //middleware
+    });
 }
 
-function loginRedirect(ctx) {
+function forgot(ctx, next) {
     if (signed) {
-        //redirected
-        dashForce()
-        return false;
+        alerts.error.push(errors.alreadyLoggedIn);
+        page('/dashboard'); return false;
     }
+    
+    setMenuContext('logged-out');
+    setUsername('Anonymous');
+    
+    setContent('forgot');
+    setSidebar('forgot');
+    setActiveMenuLink('forgot');
+    
+    matched = true;
+    next(); //middleware
+}
+
+function login(ctx, next) {
+    if (signed) {
+        alerts.error.push(errors.alreadyLoggedIn);
+        page('/dashboard'); return false;
+    }
+    
+    setMenuContext('logged-out');
+    setUsername('Anonymous');
+    
+    setContent('login');
+    setSidebar('login');
+    setActiveMenuLink('login');
+    
+    matched = true;
+    next(); //middleware
+}
+
+function loginRedirect(ctx, next) {
+    if (signed) {
+        alerts.error.push(errors.alreadyLoggedIn);
+        page('/dashboard'); return false;
+    }
+    
+    setMenuContext('logged-out');
+    setUsername('Anonymous');
     
     //set global redir to URL param
     redir = ctx.params.redir;
@@ -107,49 +142,50 @@ function loginRedirect(ctx) {
     setContent('login');
     setSidebar('login');
     setActiveMenuLink('login');
+    
+    matched = true;
+    next(); //middleware
 }
 
-function register(ctx) {
+function register(ctx, next) {
     if (signed) {
-        //redirected
-        dashForce()
-        return false;
+        alerts.error.push(errors.alreadyLoggedIn);
+        page('/dashboard'); return false;
     }
+    
+    setMenuContext('logged-out');
+    setUsername('Anonymous');
     
     setContent('register');
     setSidebar('register');
     setActiveMenuLink('register');
+    
+    matched = true;
+    next(); //middleware
 }
 
 /* Dashboard Perspective */
 
-function dashboard(ctx) {
+function dashboard(ctx, next) {
+    if (!signed) {
+        alerts.error.push(errors.notLoggedIn);
+        page('/login' + ctx.pathname); return false;
+    }
+
+    setMenuContext('logged-in');
+    setUsername(user);
+
     setContent('dashboard');
     setSidebar('dashboard');
     setActiveMenuLink('dashboard');
     
-    //must be after others
-    if (forceDash === true) {
-        addError(errors.alreadyLoggedIn);
-        forceDash = false; //reset state
-    }
-    
-    //must be after others
-    if (loggingIn === true) {
-        addSuccess(success.login);
-        loggingIn = false; //reset state
-    }
+    matched = true;
+    next(); //middleware
 }
 
-function logout(ctx) {
+function logout(ctx, next) {
     makePOST('/api/user/logout', {}, function(reply) {
-        if (!reply.success) {
-            _.each(reply.data.errors, function(val){ addError(errors[val]); });
-        }
-        
-        else {
-            page('/'); //home
-            loggingOut = true;
-        }
+        alerts.success.push(success.logout);
+        page('/'); return true; //home
     });
 }

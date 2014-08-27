@@ -61,9 +61,7 @@ $(document).on('submit', '#login-form', function(event) {
         }
         
         else {
-            //force alert
-            loggingIn = true;
-            
+            alerts.success.push(success.login);
             if (redir === '') { page('/dashboard'); }
             else { page('/' + redir); } //followthrough
         }

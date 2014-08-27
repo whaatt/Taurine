@@ -2,11 +2,15 @@
 
 //handy globals
 var signed = false;
-var forceDash = false;
-var loggingOut = false;
-var loggingIn = false;
+var matched = false;
+var user = 'Anonymous';
 
-//middleware
+var alerts = {
+    error : [],
+    success : []
+};
+
+//check auth
 page(logState);
 
 page('/', welcome);
@@ -18,10 +22,13 @@ page('/login/:redir(*)', loginRedirect);
 page('/confirm/:UID/:CID', confirm);
 
 page('/dashboard', dashboard);
-page('/logout', logout);
+page('/logout', logout); //only redirects
+
+//process alerts
+page(processAlerts);
 
 //default route
-page('*', welcome);
+page(welcome);
 
 //normalize internal URLs to base
 $('[href]').each(function() {

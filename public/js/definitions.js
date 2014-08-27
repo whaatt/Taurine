@@ -26,7 +26,13 @@ var success = {
 function addErrors(errorList, errorParams) {
     if (typeof errorParams !== 'undefined') {
         for (var i = 0; i < errorList.length; i++){
-            addError(errors[errorList[i]](errorParams[i]));
+            if (typeof errors[errorList[i]] === 'function'){
+                addError(errors[errorList[i]](errorParams[i]));
+            }
+            
+            else {
+                addError(errors[errorList[i]]);
+            }
         }
     }
     
