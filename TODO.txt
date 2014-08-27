@@ -11,13 +11,13 @@ installing on a custom server
     - Make sure /data is empty to begin with.
     - Edit name in package.json if you wish.
     - Edit:
-        Guarana root --> match your Guarana folder
+        Taurine root --> match your Taurine folder
         Admin name --> used in confirmation email
         Admin email --> used in confirmation email
       in package.json to match your site.
     - Edit /public/index.html for custom text.
     - Edit /helpers/error.js for custom errors.
-    - Edit base path in /public/js/custom.js.
+    - Edit base path in /public/js/requests.js.
     - Enjoy!
 
 question schemas 
@@ -43,7 +43,7 @@ Packets: 12
 
 Database:
 - Users
-    {ID, username, password, salt, <temporary>, <temporarySalt>, email, name, confirmed, confirmID} 
+    {ID, username, password, <temporary>, email, name, confirmed, confirmID} 
 - Sets
     {ID, name, password, info, creationDate, targetDate, directorID, subjects, config, schema, visibility}
 - Subjects

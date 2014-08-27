@@ -7,6 +7,30 @@ function welcome(ctx) {
     setActiveMenuLink('welcome');
 }
 
+//based on login page
+function confirm(ctx) {
+    var UID = ctx.params.UID;
+    var CID = ctx.params.CID;
+    login(ctx);
+    
+    makeGET('/api/user/confirm/' + UID + '/' + CID, function(reply) {
+        if (!reply.success) {
+            _.each(reply.data.errors, function(val){ addError(errors[val]); });
+        }
+        
+        else {
+            addSuccess(success.confirm);
+        }
+    });
+}
+
+function forgot(ctx) {
+    setContent('forgot');
+    setSidebar('forgot');
+    setMenuContext('logged-out');
+    setActiveMenuLink('forgot');
+}
+
 function login(ctx) {
     setContent('login');
     setSidebar('login');

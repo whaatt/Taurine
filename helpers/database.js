@@ -1,4 +1,5 @@
 var Handle = require('nedb');
+var bcrypt = require('bcrypt');
 var fs = require('fs'); //read files
 var here = __dirname + '/..'; //relative
 
@@ -48,6 +49,24 @@ module.exports = {
                 else { call(null, docs[0].counter); }
             });
         });
+    },
+    
+    hash : function(password, call) {
+        bcrypt.genSalt(10, function(err, salt) { //generate salt
+            bcrypt.hash(password, salt, function(err, hash) {
+                call(null, hash);
+            });
+        });
+    },
+    
+    verify : function(password, hash, call) {
+        bcrypt.compare(password, hash, function(err, res) {
+            call(null, res);
+        });
+    },
+    
+    random : function() {
+        return Math.random().toString(36).slice(-8);
     },
 
     users : new Handle({ filename: here + '/data/users.db', autoload: true }),

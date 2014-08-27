@@ -1,0 +1,6 @@
+Hello!
+<br><br>
+You are receiving this email because you requested a new password for your <%= appName %> account. You may now <a href="<%= appRoot %>/login" style="text-decoration: none;">login</a> to <b><%= username %></b> with <b><%= password %></b> as your temporary password. Please set a new password when you do so for the first time. If you believe you are receiving this communication in error, simply disregard or delete this message; you may continue to use your original credentials normally. Thank you!
+<br><br>
+Warm Regards,<br>
+<%= appName %> Support

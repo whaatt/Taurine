@@ -1,8 +1,15 @@
 module.exports = {
-    alreadyLoggedIn : 'You cannot perform this action while logged in.',
-    database : 'An unknown database error occurred. Please try again.',
-    duplicate : 'That username is already taken! Please try again.',
-    mail : 'Your confirmation email could not be sent. Please contact your system administrator.',
-    missingParams : 'One or more parameters was missing from your request. Please try again.',
-    parameter : function(name) { return 'Your ' + name + ' parameter did not adhere to its requirements. Please try again.' }
+    alreadyConfirmed : 'alreadyConfirmed', //registration already confirmed
+    alreadyLoggedIn : 'alreadyLoggedIn', //cannot be logged in
+    blank : 'blank', //<parameter> is blank
+    database : 'database', //database error occurrred
+    duplicate : 'duplicate', //duplicate username
+    mail : 'mail', //unknown mail error
+    missingParams : 'missingParams', //missing parameters from request
+    notConfirmed : 'notConfirmed', //username has not been confirmed
+    noSuchConfirm : 'noSuchConfirm', //confirmation ID does not exist
+    noSuchCreds : 'noSuchCreds', //given credentials do not match anything
+    parameter : 'parameter', //<parameter> is improperly provided
+    passwordConfirm : 'passwordConfirm', //confirm did not match password
+    validMail : 'validMail' //valid email is required
 }

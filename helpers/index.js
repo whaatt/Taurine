@@ -1,14 +1,14 @@
 var validate = require('validator');
 var response = require('./response');
 var database = require('./database');
-var confirm = require('./confirm');
 var error = require('./error');
+var mail = require('./mail');
 
 module.exports = {
 
     validate: validate,
     DB : database,
-    confirm : confirm,
+    mail : mail,
     error : error,
     response : response
 

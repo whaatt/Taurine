@@ -1,0 +1,9 @@
+Hello!
+
+You are receiving this email because you requested a list of <%= appName %> usernames associated with this email address. If you believe you are receiving this communication in error, simply disregard or delete this message. We have the following confirmed and unconfirmed usernames on file for this account:
+
+<% _.each(usernames, function(username) {
+    print(username + '\n');
+}); %>
+Warm Regards,
+<%= appName %> Support

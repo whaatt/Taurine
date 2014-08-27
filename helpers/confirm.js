@@ -7,7 +7,7 @@ var packInfo = require('../package.json');
 //send confirmation
 module.exports = {
 
-    send : function(email, username, CID, call) {
+    confirm : function(email, username, CID, call) {
         //create reusable transporter object using SMTP
         var transporter = nodemailer.createTransport();
         
@@ -26,8 +26,8 @@ module.exports = {
         //change the name in the package file as needed
         var subject = 'Confirm ' + appName + ' Registration';
         
-        var textPath = __dirname + '/../views/mail/text.txt';
-        var richPath = __dirname + '/../views/mail/rich.txt';
+        var textPath = __dirname + '/../views/mail/confirm/text.txt';
+        var richPath = __dirname + '/../views/mail/confirm/rich.txt';
         
         var textMail;
         var richMail;

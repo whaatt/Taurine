@@ -1,8 +1,11 @@
 Garuda API
 
-default : {success : true | false, <data | error>}
-at the same time, however, we might just want to return the pertinent object on PUT or POST
-on the other hand, maybe it's better if everything is reflected via manual queried updates
+default : {success : true | false, data : {<errors>, <errorParams>, <messages>}}
+<default> below specifies the parameter of default.data above
+
+global errors:
+[database]
+[mail]
 
 GET /:<anything not below>
     about: get the main app page
@@ -12,33 +15,34 @@ GET /:<anything not below>
 POST /api/user
     about: create new user
     in: {username, password, confirm, email, name}
-    data: {<default>}
+    data: {success : registration}
     error:
-        - missing parameters (all required)
-        - username too long or short (3 <> 20)
-        - password too long or short (8 <> 40)
-        - email too long or short (6 <> 200)
-        - name too long or short (1 <> 60)
-        - username must be alphanumeric
-        - user with username already exists
+        - missing parameters (all required) - errors : [missingParams]
+        - username too long or short (3 <> 20) - errors : [parameter] + param
+        - password too long or short (8 <> 40) - errors : [parameter] + param
+        - password must match confirmation - errors : [passwordConfirm]
+        - email too long or short (6 <> 200) - errors : [parameter] + param
+        - name too long or short (1 <> 60) - errors : [parameter] + param
+        - username must be alphanumeric - errors : [parameter] + param
+        - invalid email format - errors : [validMail]
+        - user with username already exists - errors : [duplicate]
 
 GET /api/user/confirm/:UID/:CID
     about: confirm a user registration
     in: {}
-    data: {<default>}
+    data: {success : confirm}
     error:
-        - CID does not exist
-        - already confirmed
+        - UID/CID does not exist - errors : [noSuchConfirm]
+        - already confirmed - errors : [alreadyConfirmed]
         
 POST /api/user/login
     about: login with credentials
     in: {username, password}
-    data: {<default>}
+    data: {success : login}
     error:
-        - missing parameters
-        - improper credentials
-        - user not confirmed yet
-        - current user logged in
+        - missing parameters - errors : [missingParams]
+        - improper credentials - errors : [noSuchCreds]
+        - user not confirmed yet - errors : [notConfirmed]
 
 POST /api/user/logout
     about: log out of site
@@ -50,11 +54,12 @@ POST /api/user/logout
 POST /api/user/forgot
     about: forgot your password or username
     in: {email, <username>}
-    data: {<default>}
+    data: {success : forgot}
     error:
-        - missing parameter
-        - no such email on file
-        - current user logged in
+        - missing parameters - errors : [missingParams]
+        - blank email - errors : [blank] + param
+        - no such email on file - errors : [noSuchCreds]
+        - no such username on file - errors : [noSuchCreds]
 
 GET /api/user
     about: get your basic info

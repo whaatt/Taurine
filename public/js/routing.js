@@ -6,10 +6,7 @@ page('/register', register);
 
 page('/login', login); //base login
 page('/login/:redir(*)', loginRedirect);
-
-//KEEP BASE BLANK if no subdomain
-base = ''; //CHANGE ME for installs
-page.base(base); //set routing base path
+page('/confirm/:UID/:CID', confirm);
 
 //normalize HREF URLs to reflect base
 $(document).ready(function() {
@@ -22,5 +19,5 @@ $(document).ready(function() {
     });
 });
 
-//initialize
-page.start();
+//initialize page
+page.base(base);

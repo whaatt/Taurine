@@ -1,5 +1,5 @@
 {
-  "name": "Guarana",
+  "name": "Taurine",
   "version": "0.0.0",
   "description": "An effective way to write and edit QB questions.",
   "main": "index.js",
@@ -8,20 +8,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/whaatt/Guarana.git"
+    "url": "https://github.com/whaatt/Taurine.git"
   },
   "keywords": [
     "QB",
-    "Guarana"
+    "Taurine"
   ],
   "author": "Sanjay Kannan",
   "license": "Tautology",
   "bugs": {
-    "url": "https://github.com/whaatt/Guarana/issues"
+    "url": "https://github.com/whaatt/Taurine/issues"
   },
-  "homepage": "https://github.com/whaatt/Guarana",
+  "homepage": "https://github.com/whaatt/Taurine",
   "dependencies": {
     "async": "^0.9.0",
+    "bcrypt": "^0.8.0",
     "body-parser": "^1.6.5",
     "express": "^4.8.5",
     "express-session": "^1.7.6",
@@ -31,6 +32,6 @@
     "validator": "^3.17.0"
   },
   "root": "http://www.guarana.cf",
-  "admin": "Guarana Support",
+  "admin": "Taurine Support",
   "email": "admin@skalon.com"
 }

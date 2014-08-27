@@ -1,7 +1,7 @@
 /* View Functions */
 
 function addError(error) {
-    $('.content').prepend('<div class="alert alert-warning alert-dismissible"'
+    $('.content').prepend('<div class="alert alert-danger alert-dismissible"'
      + 'role="alert"><button type="button" class="close" data-dismiss="alert"><span'
      + 'aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>'
      + '<b>Error:</b> ' + error + '</div>');
@@ -16,12 +16,12 @@ function addSuccess(success) {
 
 function setContent(className) {
     //get unchanged content from storage and stick it into content DIV
-    $('.content').empty().html($('.contents .' + className).html());
+    $('.content').empty().html(getStorage('.contents .' + className));
 }
 
 function setSidebar(className) {
     //get unchanged content from storage and stick it into sidebar DIV
-    $('.sidebar').empty().html($('.sidebars .' + className).html());
+    $('.sidebar').empty().html(getStorage('.sidebars .' + className));
 }
 
 function setMenuContext(type) {
