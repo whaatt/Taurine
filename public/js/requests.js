@@ -4,6 +4,9 @@ base = ''; //CHANGE ME for installs
 //contains storage
 var fragment = '';
 
+//login redirect
+var redir = '';
+
 $.get(base + '/partials/fragment.html', function(data) {
     //initialize frag
     fragment = data;
@@ -25,7 +28,7 @@ function makePOST(URL, data, call) {
             dataType: 'json',
             success: call,
             failure: function(err) {
-                addError('Something is wrong with your internet connection!');
+                //addError('Something is wrong with your internet connection!');
                 $('input[type="submit"]').prop('disabled', false);
             }
         });
@@ -40,7 +43,7 @@ function makeGET(URL, call) {
             dataType: 'json',
             success: call,
             failure: function(err) {
-                addError('Something is wrong with your internet connection!');
+                //addError('Something is wrong with your internet connection!');
                 $('input[type="submit"]').prop('disabled', false);
             }
         });

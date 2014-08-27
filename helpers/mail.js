@@ -5,18 +5,12 @@ var tools = require('underscore');
 var packInfo = require('../package.json');
 
 //create reusable transporter object using SMTP
-var transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-        user: 'whaatt@gmail.com',
-        pass: 'P4ssw1rD'
-    }
-});
+var transporter = nodemailer.createTransport();
 
 //send confirmation
 module.exports = {
 
-    confirm : function(email, username, CID, call) {
+    confirm : function(email, username, UID, CID, call) {
         var appName = packInfo.name; //subject
         var appRoot = packInfo.root; //subject
         var adminName = packInfo.admin; //admin
@@ -26,6 +20,7 @@ module.exports = {
             username : username,
             appName : appName,
             appRoot : appRoot,
+            UID : UID,
             CID : CID
         }
         

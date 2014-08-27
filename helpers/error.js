@@ -7,6 +7,7 @@ module.exports = {
     mail : 'mail', //unknown mail error
     missingParams : 'missingParams', //missing parameters from request
     notConfirmed : 'notConfirmed', //username has not been confirmed
+    notLoggedIn : 'notLoggedIn', //user is not logged in
     noSuchConfirm : 'noSuchConfirm', //confirmation ID does not exist
     noSuchCreds : 'noSuchCreds', //given credentials do not match anything
     parameter : 'parameter', //<parameter> is improperly provided

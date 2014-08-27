@@ -44,8 +44,14 @@
               <li class="register"><a href="/register">Register</a></li>
               <li class="forgot"><a href="/forgot">Forgot</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right logged-out">
-              <li class="username"><a><b>Anonymous</b></a></li>
+            <ul class="nav navbar-nav logged-in" style="display: none;">
+              <li class="dashboard active"><a href="/dashboard">Dashboard</a></li>
+              <li class="create"><a href="/create">Create</a></li>
+              <li class="account"><a href="/account">Account</a></li>
+              <li class="logout"><a href="/logout">Logout</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+              <li><a><b><span class="user">Anonymous</span></b></a></li>
             </ul>
           </div><!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->

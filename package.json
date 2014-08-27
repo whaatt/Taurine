@@ -31,7 +31,7 @@
     "underscore": "^1.6.0",
     "validator": "^3.17.0"
   },
-  "root": "http://www.guarana.cf",
+  "root": "http://www.taurine.cf",
   "admin": "Taurine Support",
   "email": "admin@skalon.com"
 }

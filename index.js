@@ -25,7 +25,7 @@ app.use(session({
 
 app.use(function(req, res, next) {
     var context = req.session;
-    if (!context.state) {
+    if (!context.authorized) {
         //initialize state to lacking auth
         context.authorized = false;
     }

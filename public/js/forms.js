@@ -61,7 +61,11 @@ $(document).on('submit', '#login-form', function(event) {
         }
         
         else {
-            addSuccess(success.login);
+            //force alert
+            loggingIn = true;
+            
+            if (redir === '') { page('/dashboard'); }
+            else { page('/' + redir); } //followthrough
         }
     });
 });

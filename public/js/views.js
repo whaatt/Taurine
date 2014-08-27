@@ -24,9 +24,14 @@ function setSidebar(className) {
     $('.sidebar').empty().html(getStorage('.sidebars .' + className));
 }
 
+function setUsername(username) {
+    $('.user').html(username);
+}
+
 function setMenuContext(type) {
     $('.navbar-links').children().hide(); //reset menu
     $('.navbar-links .' + type).show(); //show menu
+    $('.navbar-links .navbar-right').show(); //show user
 }
 
 function setActiveMenuLink(link) {

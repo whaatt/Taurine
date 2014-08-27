@@ -128,7 +128,8 @@ module.exports = {
                 },
                 
                 function(callback) {
-                    helpers.mail.confirm(email, username, confirmID, function(err) {
+                    var UID = newUser['_id'] //part of the confirmation URL
+                    helpers.mail.confirm(email, username, UID, confirmID, function(err) {
                         /*if (err) {
                             DB.users.remove({username : username}, function(err, num) {
                                 if (err) {
@@ -230,10 +231,10 @@ module.exports = {
                     DB.verify(password, docs[0].password, function(err, correct) {
                         if (correct === true) {
                             if (docs[0].confirmed === true) {
-                                req.session.authorized = false;
+                                req.session.authorized = true;
                                 req.session.ID = docs[0]['_id'];
                                 req.session.username = docs[0].username;
-                                        
+                                
                                 res.status(200).send(response(true, {}));
                                 return true;
                             }
@@ -253,7 +254,7 @@ module.exports = {
                             DB.verify(password, docs[0].temporary, function(err, correct) {
                                 if (correct === true) {
                                     if (docs[0].confirmed === true) {
-                                        req.session.authorized = false;
+                                        req.session.authorized = true;
                                         req.session.ID = docs[0]['_id'];
                                         req.session.username = docs[0].username;
                                         
@@ -288,7 +289,19 @@ module.exports = {
     },
     
     logout : function(req, res) {
-    
+        if (req.session.authorized === false) {
+            res.status(200).send(response(false, {
+                errors : [error.notLoggedIn]
+            })); return false;
+        }
+        
+        else {
+            req.session.authorized = false;
+            delete req.session.username;
+            delete req.session.ID;
+            
+            res.status(200).send(response(true, {}));
+        }
     },
     
     forgot : function(req, res) {
@@ -387,8 +400,26 @@ module.exports = {
     
     info : function(req, res) {
         if (req.session.authorized !== true) {
-            
+            res.status(200).send(response(false, {
+                errors : [error.notLoggedIn]
+            })); return false;
         }
+        
+        DB.users.find({username : req.session.username}, function(err, docs){
+            if (err) {
+                res.status(200).send(response(false, {
+                    errors : [error.database]
+                })); return false;
+            }
+            
+            else {
+                res.status(200).send(response(true, {
+                    username : docs[0].username,
+                    email : docs[0].email,
+                    name : docs[0].name
+                }));
+            }
+        });
     },
     
     edit : function(req, res) {
