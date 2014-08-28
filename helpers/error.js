@@ -1,6 +1,10 @@
 module.exports = {
     alreadyConfirmed : 'alreadyConfirmed', //registration already confirmed
     alreadyLoggedIn : 'alreadyLoggedIn', //cannot be logged in
+    badDate : 'badDate', //provided date was invalid
+    badSchema : 'badSchema', //schema type is invalid
+    badSubjectName : 'badSubjectName', //subject name is invalid
+    badSubjectNumbers : 'badSubjectNumbers', //subject numbers are invalid
     blank : 'blank', //<parameter> is blank
     database : 'database', //database error occurrred
     duplicate : 'duplicate', //duplicate username

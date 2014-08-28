@@ -1,6 +1,10 @@
 var errors = {
     alreadyConfirmed : 'This registration has already been confirmed!',
     alreadyLoggedIn : 'You cannot access this resource while logged in.',
+    badDate : 'Your provided target date was invalid. Please try again.',
+    badSchema : 'Your provided schema type was invalid. Please try again.',
+    badSubjectName : 'One or more of your subject names was invalid. Please try again.',
+    badSubjectNumbers : 'One or more of your subject question numbers was invalid. Please try again.',
     blank : function(name) { return 'Your ' + name + ' parameter cannot be blank! Please try again.' },
     database : 'An unknown database error occurred. Please try again.',
     duplicate : 'That username is already taken! Please try again.',

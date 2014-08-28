@@ -26,6 +26,7 @@
     "body-parser": "^1.6.5",
     "express": "^4.8.5",
     "express-session": "^1.7.6",
+    "moment": "^2.8.2",
     "nedb": "^0.11.0",
     "nodemailer": "^1.2.1",
     "underscore": "^1.6.0",

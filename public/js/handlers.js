@@ -215,17 +215,17 @@ function account(ctx, next) {
 }
 
 function logout(ctx, next) {
-    makePOST('/api/user/logout', {}, function(reply) {    
+    makePOST('/api/user/logout', {}, function(reply) {  
+        alerts.success.push(success.logout);
+        signed = false; //not signed in
+        delete state.user; //user session
+        
         setMenuContext('logged-out');
         setUsername('Anonymous');
         
         setContent('welcome');
         setSidebar('welcome');
         setActiveMenuLink('welcome');
-        
-        alerts.success.push(success.logout);
-        signed = false; //not signed in
-        delete state.user; //user session
         
         matched = true;
         next(); //middleware

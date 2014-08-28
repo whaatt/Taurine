@@ -66,7 +66,7 @@ GET /api/user
     in: {}
     data: {<default>, data : {username, email, name}}
     error:
-        - not authenticated
+        - not authenticated - errors : [notLoggedIn]
         
 POST /api/user/edit
     about: edit your own basic info
@@ -88,21 +88,25 @@ GET /api/sets/
 
 POST /api/sets
     about: create new packet set
-    in: {name, password, target, info <markdown?>, 
-        subjects : [{subject : [TU, B] <zero default>}...], 
-        config : {tossups, bonuses, packets}, 
-        schema : ACF | NSB | RCSB | RCQB, visibility}
+    in: {name, password, <target (format is YYYY-MM-DD HH:mm:ss)>, <info> <markdown?>, 
+        <subjects> : [[name, TU, B] <zero default>...], 
+        <config> : [tossups, bonuses, packets], 
+        <schema> : ACF | NSB | RCSB | RCQB, <visibility>}
     data: {<default>}
     error:
-        - not authenticated
-        - missing/malformed parameters
-        - name too long or short (1 <> 200?)
-        - password too long or short (8 <> 40?)
-        - target not a valid date <is this actually an error?>
-        - info too long (1000?)
-        - subject name too long (50?)
+        - not authenticated - errors : [notLoggedIn]
+        - missing parameters - errors : [missingParams]
+        - name too long or short (2 <> 200) - errors : [parameter] + param
+        - password too long or short (4 <> 40) - errors : [parameter] + param
+        - info too long (< 1000) - errors : [parameter] + param
+        - schema type provided is invalid - errors : [badSchema]
+        - target not a valid date - errors : [badDate]
+        - subject name too long or short (1 <> 50) - errors : [badSubjectName]
+        - TU/B numbers in subject must be between 0 and 1000 inclusive - errors : [badSubjectNumbers]
+    behaviors:
+        - if a subject in subjects is malformed, skip it
         - if config settings are not positive integers, default to zero
-        - if subject numbers are not rational numbers to two decimal points max, default to zero
+        - subject numbers are *truncated* (not rounded!) to two decimal places
         
 POST /api/sets/join
     about: join a particular packet set
