@@ -1,6 +1,7 @@
 //load all the external modules once
 var helpers = require('../helpers/index');
 var moment = require('moment'); //datetime
+var async = require('async'); //argh
 var tools = require('underscore');
 
 var DB = helpers.DB; //brevity
@@ -16,7 +17,42 @@ module.exports = {
     set : set,
     
     all : function(req, res) {
-    
+        if (req.session.authorized !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.notLoggedIn]
+            })); return false;
+        }
+        
+        DB.permissions.find({userID : req.session.ID}, function(err, docs) {
+            if (err) { console.log(err); throw err; }
+            
+            else {
+                var sets = []; //store sets to reply
+                async.eachSeries(docs, function(permission, next) {
+                    DB.sets.findOne({'_id' : permission.setID}, function(err, doc) {
+                        if (err) { console.log(err); throw err; }
+                        
+                        var set = {
+                            '_id' : doc['_id'],
+                            name : doc.name,
+                            creationDate : doc.creationDate,
+                            targetDate : doc.targetDate,
+                            access : permission.role
+                        };
+                        
+                        DB.getUserByID(doc.directorID, function(err, user) {
+                            set.directorName = user.name;
+                            set.directorUsername = user.username;
+                            sets.push(set); //add set to list
+                            next();
+                        });
+                    });
+                }, function(err){
+                    //send compilation to user
+                    res.status(200).send(response(true, {'sets' : sets}));
+                });
+            }
+        });
     },
     
     create : function(req, res) {
@@ -53,8 +89,8 @@ module.exports = {
             directorID : req.session.ID
         }
         
-        if ('info' in req.body) {
-            if (!validate.isLength(req.body.info, 0, 1000)) {
+        if ('info' in req.body && req.body.info !== '') {
+            if (!validate.isLength(req.body.info, 1, 1000)) {
                 res.status(200).send(response(false, {
                     errors : [error.parameter],
                     errorParams : ['info']
@@ -67,8 +103,7 @@ module.exports = {
         }
         
         else {
-            //blank info
-            newSet.info = '';
+            newSet.info = null;
         }
         
         if ('visibility' in req.body) {
@@ -79,6 +114,10 @@ module.exports = {
             else {
                 newSet.visibility = req.body.visibility;
             }
+        }
+        
+        else {
+            newSet.visibility = false;
         }
         
         if ('schema' in req.body) {
@@ -94,25 +133,32 @@ module.exports = {
             }
         }
         
+        else {
+            newSet.schema = 'RCQB';
+        }
+        
         newSet.config = [0, 0, 0];
         if ('config' in req.body) {
             if (validate.isInt(req.body.config[0]) &&
-                parseInt(req.body.config[0]) > 0) {
+                parseInt(req.body.config[0]) > 0 &&
+                parseInt(req.body.config[0]) <= 1000) {
                 newSet.config[0] = parseInt(req.body.config[0]);
             }
             
             if (validate.isInt(req.body.config[1]) &&
-                parseInt(req.body.config[1]) > 0) {
+                parseInt(req.body.config[1]) > 0 &&
+                parseInt(req.body.config[1]) <= 1000) {
                 newSet.config[1] = parseInt(req.body.config[1]);
             }
             
             if (validate.isInt(req.body.config[2]) &&
-                parseInt(req.body.config[2]) > 0) {
+                parseInt(req.body.config[2]) > 0 &&
+                parseInt(req.body.config[2]) <= 1000) {
                 newSet.config[2] = parseInt(req.body.config[2]);
             }
         }
         
-        if ('target' in req.body) {
+        if ('target' in req.body && req.body.target !== '') {
             var dateTarget = moment(req.body.target, 'YYYY-MM-DD HH:mm:ss');
             if (!dateTarget.isValid()) {
                 res.status(200).send(response(false, {
@@ -121,8 +167,12 @@ module.exports = {
             }
             
             else {
-                newSet.targetDate = dateTarget;
+                newSet.targetDate = dateTarget.format('YYYY-MM-DD HH:mm:ss');
             }
+        }
+        
+        else {
+            newSet.targetDate = null;
         }
         
         var dateNow = moment().format('YYYY-MM-DD HH:mm:ss');
@@ -133,7 +183,7 @@ module.exports = {
         
         //process subjects from request
         if ('subjects' in req.body &&
-            req.body.subjects.isArray() === true) {
+            Array.isArray(req.body.subjects) === true) {
             var subjectNameError = false;
             var subjectNumberError = false;
             
@@ -178,11 +228,7 @@ module.exports = {
         async.waterfall([
             function(callback) {
                 DB.getNewID('sets', function(err, ID) {
-                    if (err) {
-                        res.status(200).send(response(false, {
-                            errors : [error.database]
-                        })); return false;
-                    }
+                    if (err) { console.log(err); throw err; }
                     
                     newSet['_id'] = ID;
                     callback(null);
@@ -190,16 +236,14 @@ module.exports = {
             },
             
             function(callback) {
-                tools.each(subjects, function(subject) {
+                var index = 0; //keep track of subjects index
+                async.eachSeries(subjects, function(subject, next) {
                     DB.getNewID('subjects', function(err, ID) {
+                        if (err) { console.log(err); throw err; }
+                        
                         //add to subjects array for sets DB
-                        subjects.push(ID); //subject[3]
-                    
-                        if (err) {
-                            res.status(200).send(response(false, {
-                                errors : [error.database]
-                            })); callback(Error('error'));
-                        }
+                        subjects[index].push(ID); //subject[3]
+                        index += 1; //increment the index;
                         
                         var subjectAdd = {
                             _id : ID,
@@ -210,17 +254,11 @@ module.exports = {
                         };
                         
                         DB.subjects.insert(subjectAdd, function(err, doc) {
-                            if (err) {
-                                res.status(200).send(response(false, {
-                                    errors : [error.database]
-                                })); callback(Error());
-                            }
+                            if (err) { console.log(err); throw err; }
+                            next();
                         });
                     });
-                });
-                
-                //when each is done
-                callback(null);
+                }, callback);
             },
             
             function(callback) {
@@ -229,14 +267,26 @@ module.exports = {
                 });
                 
                 DB.sets.insert(newSet, function(err, doc) {
-                    if (err) {
-                        res.status(200).send(response(false, {
-                            errors : [error.database]
-                        })); return false;
-                    }
+                    if (err) { console.log(err); throw err; }
                     
-                    //whew! we made it through that mess
-                    res.status(200).send(response(true, {}));
+                    else {
+                        DB.getNewID('permissions', function(err, ID) {
+                            if (err) { console.log(err); throw err; }
+                            
+                            var newPerm = {
+                                '_id' : ID,
+                                setID : newSet['_id'],
+                                userID : req.session.ID,
+                                role : 'Director',
+                                focus : []
+                            }
+                            
+                            DB.permissions.insert(newPerm, function(err, doc) {
+                                if (err) { console.log(err); throw err; }
+                                res.status(200).send(response(true, {}));
+                            });
+                        });
+                    }
                 });
             }
         ]);

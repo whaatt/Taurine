@@ -13,7 +13,7 @@ var crash = Error('Failed Initialization.');
 if (!fs.existsSync(counterPath)) {
     var counters = new Handle({ filename: counterPath, autoload: true });
     
-    var docs = [
+    var countDocs = [
         {_id : 'users', counter : 114252},
         {_id : 'sets', counter : 103281},
         {_id : 'flags', counter : 1},
@@ -26,7 +26,7 @@ if (!fs.existsSync(counterPath)) {
     ];
     
     //crash our program if this failed
-    counters.insert(docs, function(err) {
+    counters.insert(countDocs, function(err) {
         if (err) { throw crash; }
     });
 }
@@ -36,18 +36,35 @@ else {
     var counters = new Handle({ filename: counterPath, autoload: true });
 }
 
+var users = new Handle({ filename: here + '/data/users.db', autoload: true });
+var sets = new Handle({ filename: here + '/data/sets.db', autoload: true });
+var subjects = new Handle({ filename: here + '/data/subjects.db', autoload: true });
+var permissions = new Handle({ filename: here + '/data/permissions.db', autoload: true });
+var tossups = new Handle({ filename: here + '/data/tossups.db', autoload: true });
+var bonuses = new Handle({ filename: here + '/data/bonuses.db', autoload: true });
+var messages = new Handle({ filename: here + '/data/messages.db', autoload: true });
+var flags = new Handle({ filename: here + '/data/flags.db', autoload: true });
+var notifications = new Handle({ filename: here + '/data/notifications.db', autoload: true });        
+            
 module.exports = {
 
     getNewID : function(table, call) {
-        counters.find({_id : table}, function(err, docs) {
+        counters.findOne({_id : table}, function(err, doc) {
             if (err) { call(err); }
-            if (docs.length === 0) { call(err); }
+            if (doc === null) { call(err); }
             
             //increment the appropriate counter for the next call of getNewID()
             counters.update({_id : table}, {$inc : {counter : 1}}, function(err) {
                 if (err) { call(err) }
-                else { call(null, docs[0].counter); }
+                else { call(null, doc.counter); }
             });
+        });
+    },
+    
+    getUserByID : function(ID, call) {
+        users.findOne({'_id' : ID}, function(err, doc) {
+            if (err) { call(err); }
+            else { call(null, doc); }
         });
     },
     
@@ -69,14 +86,14 @@ module.exports = {
         return Math.random().toString(36).slice(-8);
     },
 
-    users : new Handle({ filename: here + '/data/users.db', autoload: true }),
-    sets : new Handle({ filename: here + '/data/sets.db', autoload: true }),
-    subjects : new Handle({ filename: here + '/data/subjects.db', autoload: true }),
-    permissions : new Handle({ filename: here + '/data/permissions.db', autoload: true }),
-    tossups : new Handle({ filename: here + '/data/tossups.db', autoload: true }),
-    bonuses : new Handle({ filename: here + '/data/bonuses.db', autoload: true }),
-    messages : new Handle({ filename: here + '/data/messages.db', autoload: true }),
-    flags : new Handle({ filename: here + '/data/flags.db', autoload: true }),
-    notifications : new Handle({ filename: here + '/data/notifications.db', autoload: true })
+    users : users,
+    sets : sets,
+    subjects : subjects,
+    permissions : permissions,
+    tossups : tossups,
+    bonuses : bonuses,
+    messages : messages,
+    flags : flags,
+    notifications : notifications
 
 }

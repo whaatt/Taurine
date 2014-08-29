@@ -8,6 +8,14 @@
     border-radius: 0px !important;
 }*/
 
+html {
+    overflow-y: scroll;
+}
+
+select {
+    border-radius: 0px !important;
+}
+
 body {
     padding-top: 20px;
     padding-bottom: 20px;
@@ -26,12 +34,24 @@ body {
     padding-right: 0px;
 }
 
-.navbar a:focus {
+
+.navbar-nav a:focus {
     color: #fff !important;
 }
 
-.navbar a:hover {
+.navbar-nav a:hover {
     color: #18bc9c !important;
+}
+
+.panel {
+    word-wrap: break-word;
+}
+
+.navbar-header a:hover,
+.navbar-right a:hover,
+.navbar-header a:focus,
+.navbar-right a:focus {
+    color: #fff !important;
 }
 
 .panel {

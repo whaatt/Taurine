@@ -4,6 +4,7 @@
 var state = {};
 var signed = false;
 var matched = false;
+var subjects = [];
 
 var alerts = {
     error : [],
@@ -22,8 +23,9 @@ page('/login/:redir(*)', loginRedirect);
 page('/confirm/:UID/:CID', confirm);
 
 page('/dashboard', dashboard);
+page('/create', create);
 page('/account', account);
-page('/logout', logout); //only redirects
+page('/logout', logout);
 
 //default route
 page(welcome);

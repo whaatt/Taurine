@@ -70,11 +70,7 @@ module.exports = {
         }
         
         DB.users.find({username : username}, function(err, docs) {
-            if (err) {
-                res.status(200).send(response(false, {
-                    errors : [error.database]
-                })); return false;
-            }
+            if (err) { console.log(err); throw err; }
             
             else {
                 if (docs.length > 0) {
@@ -115,11 +111,7 @@ module.exports = {
                 
                 function(callback) {
                     DB.users.insert(newUser, function(err) {
-                        if (err) {
-                            res.status(200).send(response(false, {
-                                errors : [error.database]
-                            })); return false;
-                        }
+                        if (err) { console.log(err); throw err; }
                         
                         else {
                             callback(null);
@@ -169,11 +161,7 @@ module.exports = {
         };
         
         DB.users.find(target, function(err, docs) {
-            if (err) {
-                res.status(200).send(response(false, {
-                    errors : [error.database]
-                })); return false;
-            }
+            if (err) { console.log(err); throw err; }
             
             else {
                 if (docs.length <= 0) {
@@ -191,11 +179,7 @@ module.exports = {
                     
                     else {
                         DB.users.update(target, {$set : {confirmed : true}}, function(err, num) {
-                            if (err) {
-                                res.status(200).send(response(false, {
-                                    errors : [error.database]
-                                })); return false;
-                            }
+                            if (err) { console.log(err); throw err; }
                             
                             else {
                                 //confirm our confirmation update
@@ -220,11 +204,7 @@ module.exports = {
         var password = req.body.password;
         
         DB.users.find({username : username}, function(err, docs) {
-            if (err) {
-                res.status(200).send(response(false, {
-                    errors : [error.database]
-                })); return false;
-            }
+            if (err) { console.log(err); throw err; }
             
             else {
                 if (docs.length > 0) {
@@ -328,11 +308,7 @@ module.exports = {
             var username = req.body.username;
             
             DB.users.find({email : email, username : username}, function(err, docs) {
-                if (err) {
-                    res.status(200).send(response(false, {
-                        errors : [error.database]
-                    })); return false;
-                }
+                if (err) { console.log(err); throw err; }
                 
                 else {
                     if (docs.length <= 0) {
@@ -345,11 +321,7 @@ module.exports = {
                         var randomPass = DB.random();
                         DB.hash(randomPass, function(err, hash) {
                             DB.users.update({username : username}, {$set : {temporary : hash}}, function(err, num){
-                                if (err) {
-                                    res.status(200).send(response(false, {
-                                        errors : [error.database]
-                                    })); return false;
-                                }
+                                if (err) { console.log(err); throw err; }
                                 
                                 else {
                                     helpers.mail.password(email, username, randomPass, function(err) {
@@ -370,11 +342,7 @@ module.exports = {
             var email = req.body.email;
             
             DB.users.find({email : email}, function(err, docs) {
-                if (err) {
-                    res.status(200).send(response(false, {
-                        errors : [error.database]
-                    })); return false;
-                }
+                if (err) { console.log(err); throw err; }
                 
                 else {
                     if (docs.length <= 0) {
@@ -404,11 +372,7 @@ module.exports = {
         }
         
         DB.users.find({username : req.session.username}, function(err, docs){
-            if (err) {
-                res.status(200).send(response(false, {
-                    errors : [error.database]
-                })); return false;
-            }
+            if (err) { console.log(err); throw err; }
             
             else {
                 res.status(200).send(response(true, {
@@ -489,11 +453,7 @@ module.exports = {
                     update.password = hash;
                     
                     DB.users.update({username : req.session.username}, {$set : update}, function(err, num) {
-                        if (err) {
-                            res.status(200).send(response(false, {
-                                errors : [error.database]
-                            })); return false;
-                        }
+                        if (err) { console.log(err); throw err; }
                 
                         res.status(200).send(response(true, {
                             name : update.name,
@@ -506,11 +466,7 @@ module.exports = {
         
         else {
             DB.users.update({username : req.session.username}, {$set : update}, function(err, num) {
-                if (err) {
-                    res.status(200).send(response(false, {
-                        errors : [error.database]
-                    })); return false;
-                }
+                if (err) { console.log(err); throw err; }
         
                 res.status(200).send(response(true, {
                     name : update.name,

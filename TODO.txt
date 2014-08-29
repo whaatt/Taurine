@@ -4,7 +4,8 @@
 4. Write front-end JS.
 5. Add extra features.
 6. Rate limiting.
-7. Document the client side.
+7. Form labels for screen readers.
+8. Document the client side.
 
 installing on a custom server
 
@@ -42,15 +43,15 @@ TU/Packet: 24
 B/Packet: 24
 Packets: 12
 
-Database:
+Database (ID is actually _id):
 - Users
-    {ID, username, password, <temporary>, email, name, confirmed, confirmID} 
+    {ID, username, password, temporary, email, name, confirmed, confirmID} 
 - Sets
     {ID, name, password, info, creationDate, targetDate, directorID, subjects, config, schema, visibility}
 - Subjects
     {ID, setID, subject, countTU, countB}
 - Permissions
-    {ID, setID, userID, role}
+    {ID, setID, userID, role, focus}
 - Tossups
     {ID, setID, subjectID, difficulty, question, answer, approved, duplicates}
 - Bonuses

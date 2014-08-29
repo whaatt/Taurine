@@ -4,24 +4,34 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Write questions with your friends." />
     
     <!-- custom title here -->
     <title>Taurine</title>
     
     <!-- fancy loading detector script -->
-    <script src="/js/pace.min.js"></script>
+    <script src="js/pace.min.js"></script>
     
     <!-- stylesheet for detector script -->
-    <link href="/css/pace.css" rel="stylesheet">
+    <link href="css/pace.css" rel="stylesheet">
     
     <!-- load our currently meaningless favicon -->
     <link rel="shortcut icon" href="/images/favicon.ico">
     
     <!-- main stylesheet that is replaced with a theme -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- stylesheet for fancy data tables -->
+    <link href="css/dataTables.min.css" rel="stylesheet">
+    
+    <!-- stylesheet for making BS styled tables -->
+    <link href="css/dataTables.bootstrap.css" rel="stylesheet">
+    
+    <!-- stylesheet for date and time picker -->
+    <link href="css/picker.min.css" rel="stylesheet">
     
     <!-- all the custom or redefined styles -->
-    <link href="/css/custom.css" rel="stylesheet">
+    <link href="css/custom.css" rel="stylesheet">
   </head>
   <body>
     <div class="container hide">
@@ -57,8 +67,8 @@
         </div><!-- /.container-fluid -->
       </div>
       
-      <div class="row">
-        <div class="col-md-8 content">
+      <div class="row main">
+        <div class="col-md-8 banner">
           <div class="panel panel-default">
             <div class="panel-body">
               <b>Welcome to Taurine!</b> Whether you're directing an annual housewrite, assembling your team's ACF packet, or just compiling sets for personal use, Taurine is the all-purpose organizational tool that you may or may not have always wanted. Just like NAQT's proprietary <i>Ginseng</i> software, Taurine is also named after an ingredient on the back of my energy drinks.<br><br>
@@ -67,7 +77,7 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4 sidebar">
+        <div class="col-md-4">
           <div class="panel panel-default">
             <div class="panel-body">
               <b>Special thanks to</b> the Raleigh Charter High School <a href="http://www.raleighcharterhs.org/studentlife/clubs/qb">QB Team</a> for their tireless usage and constructive criticism of Taurine's <a href="http://www.skalon.com/garuda">predecessor</a>.<br><br>
@@ -90,6 +100,18 @@
     <!-- where the bootstrap magic happens -->
     <script src="js/bootstrap.min.js"></script>
     
+    <!-- script for some fancy data tables -->
+    <script src="js/dataTables.min.js"></script>
+    
+    <!-- script for BS friendly data tables -->
+    <script src="js/dataTables.bootstrap.js"></script>
+    
+    <!-- moment for handling dates -->
+    <script src="js/moment.min.js"></script>
+    
+    <!-- date and time picker for BS -->
+    <script src="js/picker.min.js"></script>
+    
     <!-- routing on the client side-->
     <script src="js/page.js"></script>
     
@@ -103,12 +125,12 @@
     <script src="js/views.js"></script>
     
     <!-- handle different page contexts -->
-    <script src="js/handlers.js"></script>
+    <script src="js/controllers.js"></script>
     
     <!-- all of our routing logic -->
     <script src="js/routing.js"></script>
     
     <!-- handle form submissions -->
-    <script src="js/forms.js"></script>
+    <script src="js/events.js"></script>
   </body>
 </html>

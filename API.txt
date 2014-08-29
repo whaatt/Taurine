@@ -3,10 +3,6 @@ Garuda API
 default : {success : true | false, data : {<errors>, <errorParams>, <messages>}}
 <default> below specifies the parameter of default.data above
 
-global errors:
-[database]
-[mail]
-
 GET /:<anything not below>
     about: get the main app page
     in: nothing
@@ -79,8 +75,8 @@ POST /api/user/edit
         - malformed email - errors : [validMail]
         - password and confirmation do not match : errors : [passwordConfirm]
 
-GET /api/sets/
-    about: get basic set information (ID/name/creation/date/director/access)
+GET /api/sets
+    about: get basic set information (ID/name/creation/target/director/access)
     in: {}
     data: {<default>, data : [setInfo]}
     error:
@@ -104,6 +100,7 @@ POST /api/sets
         - subject name too long or short (1 <> 50) - errors : [badSubjectName]
         - TU/B numbers in subject must be between 0 and 1000 inclusive - errors : [badSubjectNumbers]
     behaviors:
+        - adds set, adds subjects, adds permission to set
         - if a subject in subjects is malformed, skip it
         - if config settings are not positive integers, default to zero
         - subject numbers are *truncated* (not rounded!) to two decimal places

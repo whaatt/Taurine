@@ -24,6 +24,7 @@ var success = {
     redir : 'You are already logged in.',
     account : 'Your account information has been updated.',
     confirm : 'Your registration was successfully confirmed. You may now log in.',
+    create : 'Your set has been successfully created. Please visit the dashboard.',
     forgot : 'Please check your email for the information you requested.',
     login : 'You have successfully logged in.',
     logout : 'You have successfully logged out.',

@@ -64,7 +64,6 @@ function welcome(ctx, next) {
     setUsername('Anonymous');
     
     setContent('welcome');
-    setSidebar('welcome');
     setActiveMenuLink('welcome');
     
     matched = true;
@@ -85,7 +84,6 @@ function confirm(ctx, next) {
     setUsername('Anonymous');
     
     setContent('login');
-    setSidebar('login');
     setActiveMenuLink('login');
     
     makeGET('/api/user/confirm/' + UID + '/' + CID, function(reply) {
@@ -114,7 +112,6 @@ function forgot(ctx, next) {
     setUsername('Anonymous');
     
     setContent('forgot');
-    setSidebar('forgot');
     setActiveMenuLink('forgot');
     
     matched = true;
@@ -131,7 +128,6 @@ function login(ctx, next) {
     setUsername('Anonymous');
     
     setContent('login');
-    setSidebar('login');
     setActiveMenuLink('login');
     
     matched = true;
@@ -151,7 +147,6 @@ function loginRedirect(ctx, next) {
     redir = ctx.params.redir;
     
     setContent('login');
-    setSidebar('login');
     setActiveMenuLink('login');
     
     matched = true;
@@ -168,7 +163,6 @@ function register(ctx, next) {
     setUsername('Anonymous');
     
     setContent('register');
-    setSidebar('register');
     setActiveMenuLink('register');
     
     matched = true;
@@ -187,8 +181,32 @@ function dashboard(ctx, next) {
     setUsername(state.user.username);
 
     setContent('dashboard');
-    setSidebar('dashboard');
     setActiveMenuLink('dashboard');
+    
+    makeGET('/api/sets', function(reply) {
+        alert(JSON.stringify(reply));
+        matched = true;
+        next(); //middleware
+    });
+}
+
+function create(ctx, next) {
+    if (!signed) {
+        alerts.error.push(errors.notLoggedIn);
+        page('/login' + ctx.pathname); return false;
+    }
+
+    setMenuContext('logged-in');
+    setUsername(state.user.username);
+
+    setContent('create');
+    setActiveMenuLink('create');
+    
+    //empty subjects
+    subjects = [];
+    
+    //initialize date and time picker
+    $('#target-date').datetimepicker();
     
     matched = true;
     next(); //middleware
@@ -204,7 +222,6 @@ function account(ctx, next) {
     setUsername(state.user.username);
 
     setContent('account');
-    setSidebar('account');
     setActiveMenuLink('account');
     
     $('#account-name').val(state.user.name);
@@ -224,7 +241,6 @@ function logout(ctx, next) {
         setUsername('Anonymous');
         
         setContent('welcome');
-        setSidebar('welcome');
         setActiveMenuLink('welcome');
         
         matched = true;
