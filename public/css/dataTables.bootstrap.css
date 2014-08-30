@@ -1,21 +1,20 @@
 div.dataTables_length label {
 	font-weight: normal;
-	float: left;
+	/*float: left;*/
 	text-align: left;
 }
 
 div.dataTables_length select {
-	width: 75px;
+	/*width: 75px;*/
 }
 
 div.dataTables_filter label {
 	font-weight: normal;
-	float: right;
+	/*float: right;*/
 }
 
 div.dataTables_filter input {
 	width: 16em;
-	margin-left: 0.5em;
 }
 
 div.dataTables_info {
@@ -131,24 +130,23 @@ div.dataTables_scrollHead table.table-bordered {
 /*
  * TableTools styles
  */
-.table.dataTable tbody tr.active td,
-.table.dataTable tbody tr.active th {
+.table tbody tr.active td,
+.table tbody tr.active th {
 	background-color: #08C;
 	color: white;
 }
 
-.table.dataTable tbody tr.active:hover td,
-.table.dataTable tbody tr.active:hover th {
+.table tbody tr.active:hover td,
+.table tbody tr.active:hover th {
 	background-color: #0075b0 !important;
 }
 
-.table.dataTable tbody tr.active th > a,
-.table.dataTable tbody tr.active td > a {
+.table tbody tr.active a {
 	color: white;
 }
 
-.table-striped.dataTable tbody tr.active:nth-child(odd) td,
-.table-striped.dataTable tbody tr.active:nth-child(odd) th {
+.table-striped tbody tr.active:nth-child(odd) td,
+.table-striped tbody tr.active:nth-child(odd) th {
 	background-color: #017ebc;
 }
 
@@ -187,25 +185,10 @@ div.DTTT_collection_background {
 }
 
 /* TableTools information display */
-div.DTTT_print_info {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	width: 400px;
+div.DTTT_print_info.modal {
 	height: 150px;
-	margin-left: -200px;
 	margin-top: -75px;
 	text-align: center;
-	color: #333;
-	padding: 10px 30px;
-	opacity: 0.95;
-
-	background-color: white;
-	border: 1px solid rgba(0, 0, 0, 0.2);
-	border-radius: 6px;
-	
-	-webkit-box-shadow: 0 3px 7px rgba(0, 0, 0, 0.5);
-	        box-shadow: 0 3px 7px rgba(0, 0, 0, 0.5);
 }
 
 div.DTTT_print_info h6 {
@@ -295,4 +278,3 @@ div.DTFC_LeftFootWrapper table {
 div.FixedHeader_Cloned table {
 	margin: 0 !important
 }
-

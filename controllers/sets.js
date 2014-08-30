@@ -33,7 +33,7 @@ module.exports = {
                         if (err) { console.log(err); throw err; }
                         
                         var set = {
-                            '_id' : doc['_id'],
+                            ID : doc['_id'],
                             name : doc.name,
                             creationDate : doc.creationDate,
                             targetDate : doc.targetDate,

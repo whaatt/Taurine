@@ -1,4 +1,4 @@
-/* Form Handlers */
+/* Event Handlers */
 
 $(document).on('submit', '#register-form', function(event) {
     event.preventDefault();

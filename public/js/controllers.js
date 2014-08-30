@@ -184,7 +184,40 @@ function dashboard(ctx, next) {
     setActiveMenuLink('dashboard');
     
     makeGET('/api/sets', function(reply) {
-        alert(JSON.stringify(reply));
+        $('#dashboard-sets').DataTable({
+            language : {
+                lengthMenu : '_MENU_',
+                searchPlaceholder : 'Search sets.',
+                zeroRecords : 'No sets found. Would you like to <a href="' + base
+                    + '/create' + '">create</a> one?',
+                search : ''
+            },
+            lengthMenu : [[10, 25, 50, -1], ['Show 10 Items', 'Show 25 Items', 'Show 50 Items', 'Show All Items']],
+            data : reply.data.sets,
+            columns : [
+                {
+                    title : 'ID',
+                    data : 'ID', 
+                    render : function(data, type, full, meta) {
+                        return '<a href="' + base + '/set/'
+                        + data.toString() + '">' + data.toString()
+                        + '</a>'; //link to /base/set/:SID
+                    }},
+                {title : 'Set Name', data : 'name'},
+                {title : 'Your Role', data : 'access'},
+                {title : 'Director', data : 'directorName'},
+                {
+                    title : 'Target Date',
+                    data : 'targetDate',
+                    render : function(data, type, full, meta) {
+                        if (type === 'sort') return data;
+                        var out = moment(data).format('D MMMM YYYY');
+                        if (out !== 'Invalid date') return out;
+                        else { return 'None Set'; }
+                    }}
+            ]
+        });
+        
         matched = true;
         next(); //middleware
     });

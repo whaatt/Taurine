@@ -13,7 +13,7 @@ $.get(base + '/partials/fragment.html', function(data) {
     page.start();
 });
 
-function getStorage(selector) {
+function getFragment(selector) {
     //turn our fragment into a jQuery object
     return $(fragment).find(selector).html();
 }

@@ -8,6 +8,10 @@
     border-radius: 0px !important;
 }*/
 
+a {
+    text-decoration: none !important;
+}
+
 html {
     overflow-y: scroll;
 }
@@ -26,14 +30,9 @@ body {
     overflow: hidden !important;
 }
 
-.storage {
-    display: none;
-}
-
 .navbar-links {
     padding-right: 0px;
 }
-
 
 .navbar-nav a:focus {
     color: #fff !important;
@@ -41,10 +40,6 @@ body {
 
 .navbar-nav a:hover {
     color: #18bc9c !important;
-}
-
-.panel {
-    word-wrap: break-word;
 }
 
 .navbar-header a:hover,
@@ -55,5 +50,12 @@ body {
 }
 
 .panel {
+    word-wrap: break-word;
     border: 2px solid #555;
+}
+
+.panel-table  {
+    padding: 0px !important;
+    margin: 15px !important;
+    overflow: auto !important;
 }

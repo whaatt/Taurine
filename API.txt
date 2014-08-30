@@ -76,11 +76,11 @@ POST /api/user/edit
         - password and confirmation do not match : errors : [passwordConfirm]
 
 GET /api/sets
-    about: get basic set information (ID/name/creation/target/director/access)
+    about: get basic set information (ID/name/creationDate/targetDate/directorUsername/directorName/access)
     in: {}
     data: {<default>, data : [setInfo]}
     error:
-        - not authenticated
+        - not authenticated - errors : [notLoggedIn]
 
 POST /api/sets
     about: create new packet set
