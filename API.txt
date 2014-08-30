@@ -14,11 +14,12 @@ POST /api/user
     data: {success : registration}
     error:
         - missing parameters (all required) - errors : [missingParams]
-        - username too long or short (3 <> 20) - errors : [parameter] + param
-        - password too long or short (8 <> 40) - errors : [parameter] + param
+        - blank parameters (all required) - errors : [blank] + param
+        - username too long or short (3 <> 20) - errors : [length] + param
+        - password too long or short (8 <> 40) - errors : [length] + param
         - password must match confirmation - errors : [passwordConfirm]
-        - email too long or short (6 <> 200) - errors : [parameter] + param
-        - name too long or short (1 <> 60) - errors : [parameter] + param
+        - email too long or short (6 <> 200) - errors : [length] + param
+        - name too long or short (1 <> 60) - errors : [length] + param
         - username must be alphanumeric - errors : [parameter] + param
         - invalid email format - errors : [validMail]
         - user with username already exists - errors : [duplicate]
@@ -37,6 +38,7 @@ POST /api/user/login
     data: {success : login}
     error:
         - missing parameters - errors : [missingParams]
+        - blank parameters - errors : [blank] + param
         - improper credentials - errors : [noSuchCreds]
         - user not confirmed yet - errors : [notConfirmed]
 
@@ -45,7 +47,7 @@ POST /api/user/logout
     in: {}
     data: {<default>}
     error:
-        - not authenticated
+        - not authenticated - errors : [notLoggedIn]
         
 POST /api/user/forgot
     about: forgot your password or username
@@ -56,6 +58,8 @@ POST /api/user/forgot
         - blank email - errors : [blank] + param
         - no such email on file - errors : [noSuchCreds]
         - no such username on file - errors : [noSuchCreds]
+    behaviors:
+        - blank username is treated like a missing username
 
 GET /api/user
     about: get your basic info
@@ -71,7 +75,7 @@ POST /api/user/edit
     error:
         - not authenticated - errors : [notLoggedIn]
         - no password confirmation - errors : [noConfirm]
-        - invalid params - errors : [parameter] + param
+        - invalid params - errors : [parameter | length] + param
         - malformed email - errors : [validMail]
         - password and confirmation do not match : errors : [passwordConfirm]
 
@@ -92,9 +96,9 @@ POST /api/sets
     error:
         - not authenticated - errors : [notLoggedIn]
         - missing parameters - errors : [missingParams]
-        - name too long or short (2 <> 200) - errors : [parameter] + param
-        - password too long or short (4 <> 40) - errors : [parameter] + param
-        - info too long (< 1000) - errors : [parameter] + param
+        - name too long or short (2 <> 200) - errors : [length] + param
+        - password too long or short (4 <> 40) - errors : [length] + param
+        - info too long (< 1000) - errors : [length] + param
         - schema type provided is invalid - errors : [badSchema]
         - target not a valid date - errors : [badDate]
         - subject name too long or short (1 <> 50) - errors : [badSubjectName]
@@ -107,12 +111,13 @@ POST /api/sets
         
 POST /api/sets/join
     about: join a particular packet set
-    in: {setID, password}
+    in: {ID, password}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - password incorrect
+        - not authenticated - errors : [notLoggedIn]
+        - set does not exist - errors : [noSuchSet]
+        - password incorrect - errors : [wrongSetPassword]
+        - already part of set - errors : [alreadySetMember]
 
 PUT /api/sets/:SID
     about: edit a particular packet set

@@ -69,16 +69,30 @@ module.exports = {
             })); return false;
         }
         
+        if (req.body.name === '') {
+            res.status(200).send(response(false, {
+                errors : [error.blank],
+                errorParams : ['name']
+            })); return false;
+        }
+        
+        if (req.body.password === '') {
+            res.status(200).send(response(false, {
+                errors : [error.blank],
+                errorParams : ['password']
+            })); return false;
+        }
+        
         if (!validate.isLength(req.body.name, 2, 200)) {
             res.status(200).send(response(false, {
-                errors : [error.parameter],
+                errors : [error.length],
                 errorParams : ['name']
             })); return false;
         }
         
         if (!validate.isLength(req.body.password, 4, 40)) {
             res.status(200).send(response(false, {
-                errors : [error.parameter],
+                errors : [error.length],
                 errorParams : ['password']
             })); return false;
         }
@@ -92,7 +106,7 @@ module.exports = {
         if ('info' in req.body && req.body.info !== '') {
             if (!validate.isLength(req.body.info, 1, 1000)) {
                 res.status(200).send(response(false, {
-                    errors : [error.parameter],
+                    errors : [error.length],
                     errorParams : ['info']
                 })); return false;
             }
@@ -290,6 +304,104 @@ module.exports = {
                 });
             }
         ]);
+    },
+    
+    join : function(req, res) {
+        if (req.session.authorized !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.notLoggedIn]
+            })); return false;
+        }
+        
+        if (!('ID' in req.body) ||
+            !('password' in req.body)) {
+            res.status(200).send(response(false, {
+                errors : [error.missingParams]
+            })); return false;
+        }
+        
+        var SID = req.body.ID;
+        var password = req.body.password;
+        
+        if (SID === '') {
+            res.status(200).send(response(false, {
+                errors : [error.blank],
+                errorParams : ['set ID']
+            })); return false;
+        }
+        
+        if (password === '') {
+            res.status(200).send(response(false, {
+                errors : [error.blank],
+                errorParams : ['password']
+            })); return false;
+        }
+        
+        //cast to integer
+        SID = parseInt(SID);
+        
+        DB.sets.findOne({'_id' : SID}, function(err, doc) {
+            if (err) { console.log(err); throw err; }
+            
+            if (doc === null) {
+                res.status(200).send(response(false, {
+                    errors : [error.noSuchSet]
+                })); return false;
+            }
+            
+            else {
+                var targetPerm = {
+                    setID : SID,
+                    userID : req.session.ID
+                };
+                
+                if (password !== doc.password) {
+                    res.status(200).send(response(false, {
+                        errors : [error.wrongSetPassword]
+                    })); return false;
+                }
+                
+                else {
+                    DB.permissions.findOne(targetPerm, function(err, doc) {
+                        if (err) { console.log(err); throw err; }
+                        
+                        if (doc !== null) {
+                            res.status(200).send(response(false, {
+                                errors : [error.alreadySetMember]
+                            })); return false;
+                        }
+                        
+                        else {
+                            var newPerm = {
+                                '_id' : null,
+                                setID : SID,
+                                userID : req.session.ID,
+                                role : 'Writer',
+                                focus : []
+                            };
+                            
+                            async.waterfall([
+                                function(callback) {
+                                    DB.getNewID('permissions', function(err, newID) {
+                                        if (err) { console.log(err); throw err; }
+                                        newPerm['_id'] = newID;
+                                        callback(null);
+                                    });
+                                },
+                                
+                                function(callback) {
+                                    DB.permissions.insert(newPerm, function(err, doc) {
+                                        if (err) { console.log(err); throw err; }
+                                        res.status(200).send(response(true, {}));
+                                    });
+                                }
+                            ]);
+                            
+                        }
+                    });
+                }
+            }
+        })
     }
 
 }

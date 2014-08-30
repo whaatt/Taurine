@@ -24,6 +24,7 @@ page('/confirm/:UID/:CID', confirm);
 
 page('/dashboard', dashboard);
 page('/create', create);
+page('/join', join);
 page('/account', account);
 page('/logout', logout);
 

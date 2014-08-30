@@ -174,3 +174,24 @@ $(document).on('submit', '#account-form', function(event) {
         }
     });
 });
+
+$(document).on('submit', '#join-form', function(event) {
+    event.preventDefault();
+    $('#join-button').prop('disabled', true);
+    
+    var request = {
+        ID : $('#join-ID').val(),
+        password : $('#join-password').val()
+    }
+    
+    makePOST('/api/sets/join', request, function(reply) {
+        if (!reply.success) {
+            addErrors(reply.data.errors, reply.data.errorParams);
+            $('#join-button').prop('disabled', false).blur();
+        }
+        
+        else {
+            addSuccess(success.join);
+        }
+    });
+});

@@ -189,7 +189,8 @@ function dashboard(ctx, next) {
                 lengthMenu : '_MENU_',
                 searchPlaceholder : 'Search sets.',
                 zeroRecords : 'No sets found. Would you like to <a href="' + base
-                    + '/create' + '">create</a> one?',
+                    + '/create' + '">create</a> or <a href="' + base + '/join'
+                    + '">join</a> one?',
                 search : ''
             },
             lengthMenu : [[10, 25, 50, -1], ['Show 10 Items', 'Show 25 Items', 'Show 50 Items', 'Show All Items']],
@@ -240,6 +241,22 @@ function create(ctx, next) {
     
     //initialize date and time picker
     $('#target-date').datetimepicker();
+    
+    matched = true;
+    next(); //middleware
+}
+
+function join(ctx, next) {
+    if (!signed) {
+        alerts.error.push(errors.notLoggedIn);
+        page('/login' + ctx.pathname); return false;
+    }
+    
+    setMenuContext('logged-in');
+    setUsername(state.user.username);
+
+    setContent('join');
+    setActiveMenuLink('join');
     
     matched = true;
     next(); //middleware

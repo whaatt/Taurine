@@ -28,8 +28,49 @@ module.exports = {
         var email = req.body.email;
         var name = req.body.name;
         
-        if ((!validate.isLength(username, 3, 20)) ||
-            (!validate.isAlphanumeric(username))) {
+        if (username === '') {
+            res.status(200).send(response(false, {
+                errors : [error.blank],
+                errorParams : ['username']
+            })); return false;
+        }
+        
+        if (password === '') {
+            res.status(200).send(response(false, {
+                errors : [error.blank],
+                errorParams : ['password']
+            })); return false;
+        }
+        
+        if (confirm === '') {
+            res.status(200).send(response(false, {
+                errors : [error.blank],
+                errorParams : ['confirm']
+            })); return false;
+        }
+        
+        if (email === '') {
+            res.status(200).send(response(false, {
+                errors : [error.blank],
+                errorParams : ['email']
+            })); return false;
+        }
+        
+        if (name === '') {
+            res.status(200).send(response(false, {
+                errors : [error.blank],
+                errorParams : ['name']
+            })); return false;
+        }
+        
+        if (!validate.isLength(username, 3, 20)) {
+            res.status(200).send(response(false, {
+                errors : [error.length],
+                errorParams : ['username']
+            })); return false;
+        }
+        
+        if (!validate.isAlphanumeric(username)) {
             res.status(200).send(response(false, {
                 errors : [error.parameter],
                 errorParams : ['username']
@@ -38,7 +79,7 @@ module.exports = {
         
         if (!validate.isLength(password, 8, 40)) {
             res.status(200).send(response(false, {
-                errors : [error.parameter],
+                errors : [error.length],
                 errorParams : ['password']
             })); return false;
         }
@@ -51,14 +92,14 @@ module.exports = {
         
         if ((!validate.isLength(name, 1, 60))) {
             res.status(200).send(response(false, {
-                errors : [error.parameter],
+                errors : [error.length],
                 errorParams : ['name']
             })); return false;
         }
         
         if (!validate.isLength(email, 6, 200)) {
             res.status(200).send(response(false, {
-                errors : [error.parameter],
+                errors : [error.length],
                 errorParams : ['email']
             })); return false;
         }
@@ -202,6 +243,20 @@ module.exports = {
         
         var username = req.body.username;
         var password = req.body.password;
+        
+        if (username === '') {
+            res.status(200).send(response(false, {
+                errors : [error.blank],
+                errorParams : ['username']
+            })); return false;
+        }
+        
+        if (password === '') {
+            res.status(200).send(response(false, {
+                errors : [error.blank],
+                errorParams : ['password']
+            })); return false;
+        }
         
         DB.users.find({username : username}, function(err, docs) {
             if (err) { console.log(err); throw err; }
@@ -397,7 +452,7 @@ module.exports = {
         if ('name' in req.body) {
             if ((!validate.isLength(req.body.name, 1, 60))) {
                 res.status(200).send(response(false, {
-                    errors : [error.parameter],
+                    errors : [error.length],
                     errorParams : ['name']
                 })); return false;
             }
@@ -410,7 +465,7 @@ module.exports = {
         if ('email' in req.body) {
             if (!validate.isLength(req.body.email, 6, 200)) {
                 res.status(200).send(response(false, {
-                    errors : [error.parameter],
+                    errors : [error.length],
                     errorParams : ['email']
                 })); return false;
             }
@@ -429,7 +484,7 @@ module.exports = {
         if ('password' in req.body && req.body.password !== '') {        
             if (!validate.isLength(req.body.password, 8, 40)) {
                 res.status(200).send(response(false, {
-                    errors : [error.parameter],
+                    errors : [error.length],
                     errorParams : ['password']
                 })); return false;
             }

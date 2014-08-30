@@ -35,6 +35,7 @@ var router = express.Router();
     
         router.get('/sets', sets.all); //get all your sets
         router.post('/sets', sets.create); //create new set
+        router.post('/sets/join', sets.join); //join set
         
         router.get('/sets/:SID', sets.set.info); //get set info
         router.put('/sets/:SID', sets.set.edit); //edit a set
