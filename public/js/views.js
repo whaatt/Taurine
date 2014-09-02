@@ -21,6 +21,22 @@ function tableScrollHandler() {
 $(window).load(tableScrollHandler);
 $(window).on('resize', tableScrollHandler);
 
+//make the navbar collapse
+//at two lines rather than
+//at responsive breakpoint
+
+function autoCollapseBar() {
+    var navbar = $('.navbar-collapse');
+    navbar.removeClass('collapsed');
+    if (navbar.innerHeight() > 50) {
+        navbar.addClass('collapsed');
+    }
+}
+
+//tweaking responsive navbar
+$(window).load(autoCollapseBar);
+$(window).on('resize', autoCollapseBar);
+
 function addError(error) {
     $('.banner').prepend('<div class="alert alert-danger alert-dismissible"'
      + 'role="alert"><button type="button" class="close" data-dismiss="alert"><span'
@@ -37,17 +53,24 @@ function addSuccess(success) {
 
 function setContent(className) {
     //get unchanged content from fragments and stick it into content DIV
-    $('.main').empty().html(getFragment('.' + className));
+    $('.main').empty().html(getFragment('.content-storage .' + className));
 }
 
 function setUsername(username) {
-    $('.user').html(username);
+    $('.user').html(username + '<a href="' + base + '/notifications"><span class="badge" id="notify-count">12</span></a>');
 }
 
-function setMenuContext(type) {
-    $('.navbar-links').children().hide(); //reset menu
-    $('.navbar-links .' + type).show(); //show menu
-    $('.navbar-links .navbar-right').show(); //show user
+function setMenuContext(type, options) {
+    $('.navbar-links .link-group').remove(); //reset menu
+    var fragment = getFragmentOuter('.menu-storage .' + type);
+    
+    if (typeof options !== 'undefined') {
+        _.each(options, function(val, key) {
+            fragment = fragment.split(':' + key).join(val.toString());
+        });
+    }
+    
+    $('.navbar-links').prepend(fragment); //show menu
 }
 
 function setActiveMenuLink(link) {

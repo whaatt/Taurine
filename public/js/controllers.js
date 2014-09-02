@@ -17,7 +17,6 @@ function process(ctx) {
     //this deals with the load flash
     $('.container').removeClass('hide');
     
-    
     //turn off autocomplete globally
     $('form').attr('autocomplete', 'off');
 }
@@ -33,11 +32,43 @@ function logState(ctx, next) {
         
         else {
             signed = true; //signed in
-            state.user = reply.data;
+            state.user = reply.data.user;
         }
         
         //reset matched
         matched = false;
+        
+        //middle
+        next();
+    });
+}
+
+function setState(ctx, next) {
+    if (!signed) {
+        alerts.error.push(errors.notLoggedIn);
+        page('/login' + ctx.pathname); return false;
+    }
+    
+    makeGET('/api/sets/' + ctx.params.SID + '/role', function(reply) {
+        if ('errors' in reply.data &&
+            $.inArray(reply.data.errors, 'noPerms')){
+            alerts.error.push(errors.noPerms);
+            page('/dashboard'); return false;
+        }
+        
+        else {
+            state.role = reply.data.role;
+            state.SID = ctx.params.SID;
+            
+            if (state.role === 'Director' ||
+                state.role === 'Administrator') {
+                setMenuContext('set-privileged', {SID : state.SID});
+            }
+            
+            else {
+                setMenuContext('set-normal', {SID : state.SID});
+            }
+        }
         
         //middle
         next();
@@ -296,4 +327,32 @@ function logout(ctx, next) {
         matched = true;
         next(); //middleware
     });
+}
+
+/* Set Perspective */
+
+function set(ctx, next) {
+    //signed check handled by setState
+    //menu is handled by setState
+    setUsername(state.user.username);
+
+    setContent('set');
+    setActiveMenuLink('set');
+    
+    makeGET('/api/sets/' + state.SID, function(reply) {
+       $('#set-name-box').html(reply.data.set.name);
+       $('#set-ID-box').html(reply.data.set.ID);
+       $('#set-password-box').html(reply.data.set.password);
+       $('#set-director-box').html(reply.data.set.directorName);
+       
+       //get human readable version of the database date string
+       var out = moment(reply.data.set.target).format('D MMMM YYYY');
+       
+       if (reply.data.set.info !== null) $('#set-info-box').html(reply.data.set.info);
+       if (!reply.data.set.visibility) $('#set-visibility-box').html('Not Searchable');
+       if (out !== 'Invalid date') $('#set-target-box').html(out);
+    });
+    
+    matched = true;
+    next(); //middleware
 }

@@ -4,6 +4,7 @@
 var state = {};
 var signed = false;
 var matched = false;
+var permed = false;
 var subjects = [];
 
 var alerts = {
@@ -27,6 +28,13 @@ page('/create', create);
 page('/join', join);
 page('/account', account);
 page('/logout', logout);
+
+//middleware
+page('/set/:SID', setState)
+page('/set/:SID/*', setState)
+
+page('/set/:SID', set);
+//page('/set/:ID/edit', edit);
 
 //default route
 page(welcome);

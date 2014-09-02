@@ -82,7 +82,7 @@ POST /api/user/edit
 GET /api/sets
     about: get basic set information (ID/name/creationDate/targetDate/directorUsername/directorName/access)
     in: {}
-    data: {<default>, data : [setInfo]}
+    data: {<default>, data : {sets : [setInfo]}}
     error:
         - not authenticated - errors : [notLoggedIn]
 
@@ -121,26 +121,33 @@ POST /api/sets/join
 
 PUT /api/sets/:SID
     about: edit a particular packet set
-    in: {<name, password, target, info <markdown?>,
-        subjects : [{subject : [TU, B] <zero default>}...], 
-        config : {tossups, bonuses, packets}, 
-        schema : ACF | NSB | RCSB | RCQB, visibility>}
+    in: {<name>, <password>, <target (format is YYYY-MM-DD HH:mm:ss)>, <info> <markdown?>, 
+        <subjectsAdd> : [[name, TU, B] <zero default>...],
+        <subjectsUpdate> : [[SBID, name, TU, B] <zero default>...],
+        <subjectsRemove> : [SBID...],
+        <config> : [tossups, bonuses, packets], 
+        <schema> : ACF | NSB | RCSB | RCQB, <visibility>}
     data: {<default>}
     error:
-        - see POST /api/sets
-        - no unique errors?
+        - mostly see POST /api/sets
+        - note : no error for missing params
+        - no permissions for set - errors : [noPerms]
+        - subject ID does not exist - errors : [noSuchSubject]
+        - set does not exist - errors : [noSuchSet]
+    behaviors:
+        - noPerms is spawned before noSuchSet; maybe superfluous
+        - subjectsUpdate is processed before subjectsRemove
         
 GET /api/sets/:SID
     about: get complete information for a set
     in: {}
-    data: {<default>, data : {name, password, director, creation, target, info <markdown?>, subjects, config, schema, visibility}}
+    data: {<default>, data : {set : {name, password, directorID, directorUsername, directorName, creationDate, targetDate, info <markdown?>, subjects, config, schema, visibility}}}
     error:
-        - not authenticated
-        - no permissions for set
-        - <codes> only returns with director or administrator permissions
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions for set - errors : [noPerms]
 
 DELETE /api/sets/:SID
-    about: completely delete a set (TBD: do I erase all pertinent data)
+    about: completely delete a set including data
     in: {}
     data: {<default>}
     error:
@@ -153,27 +160,27 @@ GET /api/sets/:SID/role
     in: {}
     data: {<default>, data : {role}}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
+        - not authenticated - errors : [notLoggedIn]
+        - set invalid or no perms - errors : [noPerms]
         
 GET /api/sets/:SID/schema
     about: get schema type for a given set (ACF/NSB/RCQB/RCSB)
     in: {}
     data: {<default>, data : {schema}}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
+        - not authenticated - errors : [notLoggedIn]
+        - set invalid or no perms - errors : [noPerms]
+        - set does not exist - errors : [noSuchSet]
+    behaviors:
+        - noPerms is spawned before noSuchSet; maybe superfluous
 
 GET /api/sets/:SID/subjects
     about: get the subjects for a given set
     in: {}
-    data: {<default>, data : {subjects : [{subject : [TU, B] <zero default>}...}}
+    data: {<default>, data : {subjects : [[SBID, name, TU, B]...]}}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
+        - not authenticated - errors : [notLoggedIn]
+        - set invalid or no perms - errors : [noPerms]
         
 GET /api/sets/:SID/members
     about: get all members belonging to a given set
@@ -201,10 +208,10 @@ TODO: GET /api/sets/:SID/stats
     data: {<default>, data : (TBD)}
     error: TBD
 
-TODO: Import (inc. ACF)
+TODO: Import
 TODO: Duplicate Search
 TODO: Notifications
-TODO: User Global Stats
+TODO: Flag Question
 
 GET /api/sets/:SID/tossups
     about: get a list of tossups (ID/<tossup>/answer/difficulty/approved/duplicate/creator/editor/flagState)

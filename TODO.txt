@@ -2,10 +2,13 @@
 2. Write controllers.
 3. Write front-end HTML.
 4. Write front-end JS.
-5. Add extra features.
 6. Rate limiting.
 7. Form labels for screen readers.
-8. Document the client side.
+8. Document the client side more.
+
+feature roadmap:
+- user global stats
+- ACF import
 
 installing on a custom server
 
@@ -34,6 +37,12 @@ question schemas define:
     - packet formatting
     - fields used for writing
     - helpful hints here and there
+
+statistics:
+
+- questions (TU/Bonus) by subject - subject, TUs, Bonuses, TU Need, Bonus Need, TU App, Bonus App
+- questions (TU/Bonus) by user - subject, TUs, Bonuses, TU App, Bonus App
+- editor stats - TU App, Bonus App, Unique TU Edits, Unique Bonus Edits
     
 Geography - 3/3
 Math - 0.5/1
@@ -51,11 +60,11 @@ Database (ID is actually _id):
 - Subjects
     {ID, setID, subject, countTU, countB}
 - Permissions
-    {ID, setID, userID, role, focus}
+    {ID, setID, userID, role, focus, editsTU, editsB}
 - Tossups
-    {ID, setID, subjectID, difficulty, question, answer, approved, duplicates}
+    {ID, setID, subjectID, difficulty, question, answer, approved, approvedByID, duplicates}
 - Bonuses
-    {ID, setID, subjectID, difficulty, lead, questions, answers, approved, duplicates}
+    {ID, setID, subjectID, difficulty, lead, questions, answers, approved, approvedByID, duplicates}
 - Messages
     {ID, userID, type, setID, questionID, message, date}
 - Flags

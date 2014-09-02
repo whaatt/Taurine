@@ -23,7 +23,7 @@ select {
 body {
     padding-top: 20px;
     padding-bottom: 20px;
-    background-image: url(assets/images/stripe.gif);
+    background-image: url(images/stripe.gif);
 }
 
 .navbar-links {
@@ -58,4 +58,16 @@ body {
     padding: 0px !important;
     margin: 15px !important;
     overflow: auto !important;
+}
+
+#notify-count {
+    margin-left: 6px;
+}
+
+.no-margin-bc {
+    margin: 0 !important;
+}
+
+.margin-bottom-bc {
+    margin: 0 0 15px 0 !important;
 }

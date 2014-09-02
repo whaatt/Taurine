@@ -1,273 +1,347 @@
 <div class="storage">
-  <div class="welcome">
-    <div class="col-md-8 banner">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <b>Welcome to Taurine!</b> Whether you're directing an annual housewrite, assembling your team's ACF packet, or just compiling sets for personal use, Taurine is the all-purpose organizational tool that you may or may not have always wanted. Just like NAQT's proprietary <i>Ginseng</i> software, Taurine is also named after an ingredient on the back of my energy drinks.<br><br>
-          
-          Disclaimer: I am a rising <a href="http://www.stanford.edu">college</a> freshman who is hoping to try his hand at college bowl. The practical implication of this fact is that there exists a possibility I might play on any college sets written on this server; while I promise to disclose any inadvertent exposure of your questions, you might prefer to host a copy of Taurine on your own domain. Please contact me if that is the case. I totally understand in light of the recent security scandals.
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <b>Special thanks to</b> the Raleigh Charter High School <a href="http://www.raleighcharterhs.org/studentlife/clubs/qb">QB Team</a> for their tireless usage and constructive criticism of Taurine's <a href="http://www.skalon.com/garuda">predecessor</a>.<br><br>
-          
-          Thanks also to <a href="http://www.qbwiki.com/wiki/Charles_Hang">Charles Hang</a> of Olympia Questions for an extensive list of suggestions. Many of these improvements are reflected in Taurine.<br><br>
-          
-          Taurine is free for personal and commercial use of any kind. If you're unsure whether a particular use case is appropriate, please consult the extremely concise and clear <a href="https://github.com/whaatt/Tautology/blob/master/License.md">license</a> agreement.
-        </div>
-      </div>
-    </div>
-  </div><!-- /.welcome -->
-  <div class="login">
-    <div class="col-md-8 banner">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          Please log in using the following form. Multiple usernames can be associated with the same email; therefore, you must use your username rather than your email address. If you have forgotten any of your credentials, please pay a visit to the <a href="/forgot">Forgot</a> page.
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <form id="login-form">
-            <div class="form-group">
-              <input type="text" class="form-control" id="login-username" placeholder="Enter username.">
-            </div>
-            <div class="form-group">
-              <input type="password" class="form-control" id="login-password" placeholder="Enter password.">
-            </div>
-            <button type="submit" class="btn btn-default btn-block" id="login-button">Login Account</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div><!-- /.login -->
-  <div class="register">
-    <div class="col-md-8 banner">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          Please register using the following form. I encourage the usage of real names for all work associated with a given individual; this optional measure will decrease any potential confusion about your identity in the future. The server does enforce certain validation criteria for your credentials:<br><br>
-          
-          <ul>
-            <li>Username: Must be between three and twenty alphanumeric characters.</li>
-            <li>Email: Must be a valid email between six and two hundred characters.</li>
-            <li>Password: Must be eight to forty characters of any type.</li>
-            <li>Name: Must be one to sixty characters of any type.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <form id="register-form">
-            <div class="form-group">
-              <input type="text" class="form-control" id="register-name" placeholder="Enter your name.">
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" id="register-email" placeholder="Enter your email.">
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" id="register-username" placeholder="Enter username.">
-            </div>
-            <div class="form-group">
-              <input type="password" class="form-control" id="register-password" placeholder="Enter password.">
-            </div>
-            <div class="form-group">
-              <input type="password" class="form-control" id="register-confirm" placeholder="Confirm password.">
-            </div>
-            <button type="submit" class="btn btn-default btn-block" id="register-button">Register Account</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div><!-- /.register -->
-  <div class="forgot">
-    <div class="col-md-8 banner">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          This form allows you to recover your login credentials. If you forgot your password, enter your username and email to receive a temporary password. If you forgot your username, enter only an email to receive a list of usernames associated with the given address. If you forgot your email, I don't know what to say.
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <form id="forgot-form">
-            <div class="form-group">
-              <input type="text" class="form-control" id="forgot-username" placeholder="Enter username.">
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" id="forgot-email" placeholder="Enter your email.">
-            </div>
-            <button type="submit" class="btn btn-default btn-block" id="forgot-button">Too Forgetful</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div><!-- /.forgot -->
-  <div class="dashboard">
-    <div class="col-md-9 banner">
-      <div class="panel panel-default dashboard-sets-panel">
-        <div class="panel-body panel-table dashboard-sets-body">
-          <table class="table" id="dashboard-sets"></table>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          Each of your sets are listed in the preceding table. Please click on each respective set ID to access its information and data. If you would like to join or create a set, please visit the respective menu tabs.
-        </div>
-      </div>
-    </div>
-  </div><!-- /.dashboard -->
-  <div class="create"><form id="create-form">
-    <div class="col-md-8 banner">
-      <div class="row">
-        <div class="col-md-6">
-          <div class="panel panel-default">
-            <div class="panel-body">
-              The following form can be used to create a new set. Most of the parameters should be largely clear; if you do not want to set numbers for packets or subjects, you may simply leave the relevant fields blank. Packet numbers must be integers, but subject numbers can be decimal values rounded to two places.
-            </div>
+  <div class="menu-storage">
+    <ul class="nav navbar-nav logged-out link-group">
+      <li class="welcome active"><a href="/">Welcome</a></li>
+      <li class="login"><a href="/login">Login</a></li>
+      <li class="register"><a href="/register">Register</a></li>
+      <li class="forgot"><a href="/forgot">Forgot</a></li>
+    </ul>
+    <ul class="nav navbar-nav logged-in link-group">
+      <li class="dashboard active"><a href="/dashboard">Dashboard</a></li>
+      <li class="create"><a href="/create">Create</a></li>
+      <li class="join"><a href="/join">Join</a></li>
+      <li class="account"><a href="/account">Account</a></li>
+      <li class="logout"><a href="/logout">Logout</a></li>
+    </ul>
+    <ul class="nav navbar-nav set-normal link-group">
+      <li class="set active"><a href="/set/:SID">Set</a></li>
+      <li class="stats"><a href="/set/:SID/stats">Stats</a></li>
+      <li class="import"><a href="/set/:SID/import">Import</a></li>
+      <li class="tossups"><a href="/set/:SID/tossups">Tossups</a></li>
+      <li class="bonuses"><a href="/set/:SID/bonuses">Bonuses</a></li>
+      <li class="packets"><a href="/set/:SID/packets">Packets</a></li>
+      <li class="exit"><a href="/dashboard">Exit</a></li>
+    </ul>
+    <ul class="nav navbar-nav set-privileged link-group">
+      <li class="set active"><a href="/set/:SID">Set</a></li>
+      <li class="edit"><a href="/set/:SID/edit">Edit</a></li>
+      <li class="stats"><a href="/set/:SID/stats">Stats</a></li>
+      <li class="import"><a href="/set/:SID/import">Import</a></li>
+      <li class="tossups"><a href="/set/:SID/tossups">Tossups</a></li>
+      <li class="bonuses"><a href="/set/:SID/bonuses">Bonuses</a></li>
+      <li class="packets"><a href="/set/:SID/packets">Packets</a></li>
+      <li class="exit"><a href="/dashboard">Exit</a></li>
+    </ul>
+  </div>
+  <div class="content-storage">
+    <div class="welcome">
+      <div class="col-md-8 banner">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <b>Welcome to Taurine!</b> Whether you're directing an annual housewrite, assembling your team's ACF packet, or just compiling sets for personal use, Taurine is the all-purpose organizational tool that you may or may not have always wanted. Just like NAQT's proprietary <i>Ginseng</i> software, Taurine is also named after an ingredient on the back of my energy drinks.<br><br>
+            
+            Disclaimer: I am a rising <a href="http://www.stanford.edu">college</a> freshman who is hoping to try his hand at college bowl. The practical implication of this fact is that there exists a possibility I might play on any college sets written on this server; while I promise to disclose any inadvertent exposure of your questions, you might prefer to host a copy of Taurine on your own domain. Please contact me if that is the case. I totally understand in light of the recent security scandals.
           </div>
-          <div class="panel panel-default">
-            <div class="panel-body">
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <b>Special thanks to</b> the Raleigh Charter High School <a href="http://www.raleighcharterhs.org/studentlife/clubs/qb">QB Team</a> for their tireless usage and constructive criticism of Taurine's <a href="http://www.skalon.com/garuda">predecessor</a>.<br><br>
+            
+            Thanks also to <a href="http://www.qbwiki.com/wiki/Charles_Hang">Charles Hang</a> of Olympia Questions for an extensive list of suggestions. Many of these improvements are reflected in Taurine.<br><br>
+            
+            Taurine is free for personal and commercial use of any kind. If you're unsure whether a particular use case is appropriate, please consult the extremely concise and clear <a href="https://github.com/whaatt/Tautology/blob/master/License.md">license</a> agreement.
+          </div>
+        </div>
+      </div>
+    </div><!-- /.welcome -->
+    <div class="login">
+      <div class="col-md-8 banner">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            Please log in using the following form. Multiple usernames can be associated with the same email; therefore, you must use your username rather than your email address. If you have forgotten any of your credentials, please pay a visit to the <a href="/forgot">Forgot</a> page.
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <form id="login-form">
               <div class="form-group">
-                <input type="text" class="form-control" id="create-name" placeholder="Enter set name.">
+                <input type="text" class="form-control" id="login-username" placeholder="Enter username.">
               </div>
               <div class="form-group">
-                <input type="text" class="form-control" id="create-info" placeholder="Enter set description.">
+                <input type="password" class="form-control" id="login-password" placeholder="Enter password.">
+              </div>
+              <button type="submit" class="btn btn-default btn-block" id="login-button">Login Account</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.login -->
+    <div class="register">
+      <div class="col-md-8 banner">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            Please register using the following form. I encourage the usage of real names for all work associated with a given individual; this optional measure will decrease any potential confusion about your identity in the future. The server does enforce certain validation criteria for your credentials:<br><br>
+            
+            <ul>
+              <li>Username: Must be between three and twenty alphanumeric characters.</li>
+              <li>Email: Must be a valid email between six and two hundred characters.</li>
+              <li>Password: Must be eight to forty characters of any type.</li>
+              <li>Name: Must be one to sixty characters of any type.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <form id="register-form">
+              <div class="form-group">
+                <input type="text" class="form-control" id="register-name" placeholder="Enter your name.">
               </div>
               <div class="form-group">
-                <div class="input-group" id="target-date">
-                  <input type="text" class="form-control" id="create-target" placeholder="Enter set target date." data-date-format="YYYY-MM-DD HH:mm:ss">
-                  <span class="input-group-addon">
-                    <span class="glyphicon glyphicon-calendar"></span>
-                  </span>
+                <input type="text" class="form-control" id="register-email" placeholder="Enter your email.">
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" id="register-username" placeholder="Enter username.">
+              </div>
+              <div class="form-group">
+                <input type="password" class="form-control" id="register-password" placeholder="Enter password.">
+              </div>
+              <div class="form-group">
+                <input type="password" class="form-control" id="register-confirm" placeholder="Confirm password.">
+              </div>
+              <button type="submit" class="btn btn-default btn-block" id="register-button">Register Account</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.register -->
+    <div class="forgot">
+      <div class="col-md-8 banner">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            This form allows you to recover your login credentials. If you forgot your password, enter your username and email to receive a temporary password. If you forgot your username, enter only an email to receive a list of usernames associated with the given address. If you forgot your email, I don't know what to say.
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <form id="forgot-form">
+              <div class="form-group">
+                <input type="text" class="form-control" id="forgot-username" placeholder="Enter username.">
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" id="forgot-email" placeholder="Enter your email.">
+              </div>
+              <button type="submit" class="btn btn-default btn-block" id="forgot-button">Too Forgetful</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.forgot -->
+    <div class="dashboard">
+      <div class="col-md-9 banner">
+        <div class="panel panel-default dashboard-sets-panel">
+          <div class="panel-body panel-table dashboard-sets-body">
+            <table class="table" id="dashboard-sets"></table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            Each of your sets are listed in the preceding table. You may click on  particular set ID link to access its information and data. If you would like to join or create a set, please visit the respective menu tabs.
+          </div>
+        </div>
+      </div>
+    </div><!-- /.dashboard -->
+    <div class="create"><form id="create-form">
+      <div class="col-md-8 banner">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                The following form can be used to create a new set. Most of the parameters should be largely clear; if you do not want to set numbers for packets or subjects, you may simply leave the relevant fields blank. Packet numbers must be integers, but subject numbers can be decimal values rounded to two places.
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="create-name" placeholder="Enter set name.">
                 </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="create-info" placeholder="Enter set description.">
+                </div>
+                <div class="form-group">
+                  <div class="input-group" id="target-date">
+                    <input type="text" class="form-control" id="create-target" placeholder="Enter set target date." data-date-format="YYYY-MM-DD HH:mm:ss">
+                    <span class="input-group-addon">
+                      <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                  </div>
+                </div>
+                <input type="text" class="form-control" id="create-password" placeholder="Enter set access password.">
               </div>
-              <input type="text" class="form-control" id="create-password" placeholder="Enter set access password.">
             </div>
           </div>
-        </div>
-        <div class="col-md-6">
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <div class="form-group">
-                <select class="form-control" id="create-schema">
-                  <option value="RCQB">RCQB Formatting</option>
-                  <option value="ACF">ACF Formatting</option>
-                  <option value="RCSB">RCSB Formatting</option>
-                  <option value="NSB">NSB Formatting</option>
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="form-group">
+                  <select class="form-control" id="create-schema">
+                    <option value="RCQB">RCQB Formatting</option>
+                    <option value="ACF">ACF Formatting</option>
+                    <option value="RCSB">RCSB Formatting</option>
+                    <option value="NSB">NSB Formatting</option>
+                  </select>
+                </div>
+                <select class="form-control" id="create-visibility">
+                  <option value="false">Not Searchable</option>
+                  <option value="true">Searchable</option>
                 </select>
               </div>
-              <select class="form-control" id="create-visibility">
-                <option value="false">Not Searchable</option>
-                <option value="true">Searchable</option>
-              </select>
             </div>
-          </div>
-          <div class="panel panel-default">
-            <div class="panel-body">
-              <div class="form-group">
-                <input type="text" class="form-control" id="create-subject" placeholder="Enter subject name.">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="create-subject" placeholder="Enter subject name.">
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="create-subject-TU" placeholder="Subject tossups per packet.">
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="create-subject-B" placeholder="Subject bonuses per packet.">
+                </div>
+                <button type="submit" class="btn btn-default btn-block" id="create-subject-button">Add Subject</button> 
               </div>
-              <div class="form-group">
-                <input type="text" class="form-control" id="create-subject-TU" placeholder="Subject tossups per packet.">
-              </div>
-              <div class="form-group">
-                <input type="text" class="form-control" id="create-subject-B" placeholder="Subject bonuses per packet.">
-              </div>
-              <button type="submit" class="btn btn-default btn-block" id="create-subject-button">Add Subject</button> 
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-body text-center none-added" id="subject-list">
-          No subjects added.
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body text-center none-added" id="subject-list">
+            No subjects added.
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="form-group">
+              <input type="text" class="form-control" id="create-tossups" placeholder="Tossups per packet.">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="create-bonuses" placeholder="Bonuses per packet.">
+            </div>
+            <div class="form-group">                  
+              <input type="text" class="form-control" id="create-packets" placeholder="Number of packets.">
+            </div>
+            <button type="submit" class="btn btn-default btn-block" id="create-button">Create Set</button> 
+          </div>
         </div>
       </div>
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <div class="form-group">
-            <input type="text" class="form-control" id="create-tossups" placeholder="Tossups per packet.">
-          </div>
-          <div class="form-group">
-            <input type="text" class="form-control" id="create-bonuses" placeholder="Bonuses per packet.">
-          </div>
-          <div class="form-group">                  
-            <input type="text" class="form-control" id="create-packets" placeholder="Number of packets.">
-          </div>
-          <button type="submit" class="btn btn-default btn-block" id="create-button">Create Set</button> 
-        </div>
-      </div>
-    </div>
-  </form></div><!-- /.create -->
+    </form></div><!-- /.create -->
     <div class="join">
-    <div class="col-md-8 banner">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          You may join an existing set using the following form. Both the set ID and password are required and must match the appropriate credentials in the database. If you do not have this information, please contact your tournament director.
+      <div class="col-md-8 banner">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            You may join an existing set using the following form. Both the set ID and password are required and must match the appropriate credentials in the database. If you do not have this information, please contact your tournament director.
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <form id="join-form">
-            <div class="form-group">
-              <input type="text" class="form-control" id="join-ID" placeholder="Enter set ID.">
-            </div>
-            <div class="form-group">
-              <input type="password" class="form-control" id="join-password" placeholder="Enter set password.">
-            </div>
-            <button type="submit" class="btn btn-default btn-block" id="join-button">Join Set</button>
-          </form>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <form id="join-form">
+              <div class="form-group">
+                <input type="text" class="form-control" id="join-ID" placeholder="Enter set ID.">
+              </div>
+              <div class="form-group">
+                <input type="password" class="form-control" id="join-password" placeholder="Enter set password.">
+              </div>
+              <button type="submit" class="btn btn-default btn-block" id="join-button">Join Set</button>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
-  </div><!-- /.join -->
-  <div class="account">
-    <div class="col-md-8 banner">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          You may edit your account using the following form. I again encourage the usage of real names for all work associated with a given individual; this optional measure will decrease any potential confusion about your identity in the future. Usernames are currently not editable due to security issues.<br><br>
-          
-          <ul>
-            <li>Email: Must be a valid email between six and two hundred characters.</li>
-            <li>Password: Must be eight to forty characters of any type.</li>
-            <li>Name: Must be one to sixty characters of any type.</li>
-          </ul>
+    </div><!-- /.join -->
+    <div class="account">
+      <div class="col-md-8 banner">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            You may edit your account using the following form. I again encourage the usage of real names for all work associated with a given individual; this optional measure will decrease any potential confusion about your identity in the future. Usernames are currently not editable due to security issues.<br><br>
+            
+            <ul>
+              <li>Email: Must be a valid email between six and two hundred characters.</li>
+              <li>Password: Must be eight to forty characters of any type.</li>
+              <li>Name: Must be one to sixty characters of any type.</li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col-md-4">
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <form id="account-form">
-            <div class="form-group">
-              <input type="text" class="form-control" id="account-name" placeholder="Edit your name.">
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" id="account-email" placeholder="Edit your email.">
-            </div>
-            <div class="form-group">
-              <input type="password" class="form-control" id="account-password" placeholder="Enter your new password.">
-            </div>
-            <div class="form-group">
-              <input type="password" class="form-control" id="account-confirm" placeholder="Confirm your new password.">
-            </div>
-            <button type="submit" class="btn btn-default btn-block" id="account-button">Edit Account</button>
-          </form>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <form id="account-form">
+              <div class="form-group">
+                <input type="text" class="form-control" id="account-name" placeholder="Edit your name.">
+              </div>
+              <div class="form-group">
+                <input type="text" class="form-control" id="account-email" placeholder="Edit your email.">
+              </div>
+              <div class="form-group">
+                <input type="password" class="form-control" id="account-password" placeholder="Enter your new password.">
+              </div>
+              <div class="form-group">
+                <input type="password" class="form-control" id="account-confirm" placeholder="Confirm your new password.">
+              </div>
+              <button type="submit" class="btn btn-default btn-block" id="account-button">Edit Account</button>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
-  </div><!-- /.account -->
+    </div><!-- /.account -->
+    <div class="set">
+      <div class="col-md-8 banner">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            Member shit goes here.
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body text-center">
+            Set Name: <b id="set-name-box">Test Tournament XIV</b>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body text-center">
+            <span id="set-info-box">No set info was provided.</span>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body text-center">
+            <ol class="breadcrumb margin-bottom-bc">
+              Set ID: <li><b id="set-ID-box">12345</b></li>
+            </ol>
+            <ol class="breadcrumb no-margin-bc">
+              Set Password: <li><b id="set-password-box">passw0rd</b></li>
+            </ol>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body text-center">
+            Target Date: <span id="set-target-box">None Set</span><br>
+            Set Visibility: <span id="set-visibility-box">Searchable</span><br>
+            Set Director: <span id="set-director-box">John Doe</span><br>
+          </div>
+        </div>
+      </div>
+    </div><!-- /.set -->
+  </div>
 </div>

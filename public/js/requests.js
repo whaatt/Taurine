@@ -18,6 +18,12 @@ function getFragment(selector) {
     return $(fragment).find(selector).html();
 }
 
+//include wrapping tag
+function getFragmentOuter(selector) {
+    //turn our fragment into a jQuery object
+    return $(fragment).find(selector)[0].outerHTML;
+}
+
 function makePOST(URL, data, call) {
     Pace.track(function(){
         $.ajax({

@@ -15,9 +15,11 @@ module.exports = {
     noConfirm : 'noConfirm', //no password confirmation included
     notConfirmed : 'notConfirmed', //username has not been confirmed
     notLoggedIn : 'notLoggedIn', //user is not logged in
+    noPerms : 'noPerms', //user does not have permissions for resource
     noSuchConfirm : 'noSuchConfirm', //confirmation ID does not exist
     noSuchCreds : 'noSuchCreds', //given credentials do not match anything
     noSuchSet : 'noSuchSet', //given set ID does not exist in DB
+    noSuchSubject : 'noSuchSubject', //specified subject is not accessible
     parameter : 'parameter', //<parameter> is improperly provided
     passwordConfirm : 'passwordConfirm', //confirm did not match password
     validMail : 'validMail', //valid email is required

@@ -430,11 +430,11 @@ module.exports = {
             if (err) { console.log(err); throw err; }
             
             else {
-                res.status(200).send(response(true, {
+                res.status(200).send(response(true, {user : {
                     username : docs[0].username,
                     email : docs[0].email,
                     name : docs[0].name
-                }));
+                }}));
             }
         });
     },

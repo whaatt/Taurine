@@ -41,6 +41,7 @@ module.exports = {
                         };
                         
                         DB.getUserByID(doc.directorID, function(err, user) {
+                            if (err) { console.log(err); throw err; }
                             set.directorName = user.name;
                             set.directorUsername = user.username;
                             sets.push(set); //add set to list
@@ -377,7 +378,9 @@ module.exports = {
                                 setID : SID,
                                 userID : req.session.ID,
                                 role : 'Writer',
-                                focus : []
+                                focus : [],
+                                editsTU : [],
+                                editsB: []
                             };
                             
                             async.waterfall([
