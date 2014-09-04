@@ -37,6 +37,21 @@ function autoCollapseBar() {
 $(window).load(autoCollapseBar);
 $(window).on('resize', autoCollapseBar);
 
+//decode HTML entities
+$.fn.valSafe = function(value) {
+    if (typeof value !== 'undefined') {
+        if (typeof value === 'string') value = $('<textarea/>').html(value).val();
+        else value = _.map(value, function(el) { return $('<textarea/>').html(el).val(); });
+    }
+    
+    return value ? $(this).val(value) : $(this).val();
+};
+
+//blur buttons on click regardless of success
+$(document).on('click', 'button', function() {
+    $(this).blur();
+});
+
 function addError(error) {
     $('.banner').prepend('<div class="alert alert-danger alert-dismissible"'
      + 'role="alert"><button type="button" class="close" data-dismiss="alert"><span'
@@ -53,7 +68,8 @@ function addSuccess(success) {
 
 function setContent(className) {
     //get unchanged content from fragments and stick it into content DIV
-    $('.main').empty().html(getFragment('.content-storage .' + className));
+    $('.main').empty().html(getFragmentInner('.content-storage .' + className));
+    tip();
 }
 
 function setUsername(username) {
@@ -76,4 +92,48 @@ function setMenuContext(type, options) {
 function setActiveMenuLink(link) {
     $('.navbar-nav li').removeClass('active');
     $('.navbar-nav .' + link).addClass('active');
+}
+
+function tooltip(display, hidden, my, at) {
+    return '<span class="tip" data-my="' + my + '" data-at="' + at
+        + '">' + display + '</span><div class="hide">' + hidden + '</div>';
+}
+
+//display tooltips
+function tip() {
+    _.each($('[title]'), function(me) {
+        $(me).qtip({
+            position : {
+                my : $(me).attr('data-my'),
+                at : $(me).attr('data-at')
+            },
+            style: {
+                classes: 'qtip-bootstrap'
+            },
+            hide: {
+                fixed: true,
+                delay: 50
+            }
+        });
+    });
+    
+    _.each($('.tip'), function(me) {
+        $(me).qtip({
+            position : {
+                my : $(me).attr('data-my'),
+                at : $(me).attr('data-at')
+            },
+            style: {
+                classes: 'qtip-bootstrap'
+            },
+            content: {
+                text: $(me).next('div').html()
+            },
+            hide: {
+                fixed: true,
+                delay: 50
+            }
+        });
+    });
+    
 }

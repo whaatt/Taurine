@@ -13,14 +13,14 @@ $.get(base + '/partials/fragment.html', function(data) {
     page.start();
 });
 
-function getFragment(selector) {
-    //turn our fragment into a jQuery object
+function getFragmentInner(selector) {
+    //get HTML that is inside the fragment
     return $(fragment).find(selector).html();
 }
 
 //include wrapping tag
 function getFragmentOuter(selector) {
-    //turn our fragment into a jQuery object
+    //get HTML that includes the fragment itself
     return $(fragment).find(selector)[0].outerHTML;
 }
 
@@ -41,10 +41,42 @@ function makePOST(URL, data, call) {
     });
 }
 
+function makePUT(URL, data, call) {
+    Pace.track(function(){
+        $.ajax({
+            type: 'PUT',
+            url: base + URL,
+            data: JSON.stringify(data),
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            success: call,
+            failure: function(err) {
+                //addError('Something is wrong with your internet connection!');
+                $('input[type="submit"]').prop('disabled', false);
+            }
+        });
+    });
+}
+
 function makeGET(URL, call) {
     Pace.track(function(){
         $.ajax({
             type: 'GET',
+            url: base + URL,
+            dataType: 'json',
+            success: call,
+            failure: function(err) {
+                //addError('Something is wrong with your internet connection!');
+                $('input[type="submit"]').prop('disabled', false);
+            }
+        });
+    });
+}
+
+function makeDEL(URL, call) {
+    Pace.track(function(){
+        $.ajax({
+            type: 'DELETE',
             url: base + URL,
             dataType: 'json',
             success: call,

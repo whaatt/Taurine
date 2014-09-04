@@ -6,6 +6,13 @@ var signed = false;
 var matched = false;
 var permed = false;
 var subjects = [];
+var deleteConfirm = 0;
+
+var subjectsAdd = [];
+var subjectsUpdate = [];
+var subjectsRemove = [];
+var subjectsOriginal = [];
+var subjectsList = [];
 
 var alerts = {
     error : [],
@@ -34,7 +41,7 @@ page('/set/:SID', setState)
 page('/set/:SID/*', setState)
 
 page('/set/:SID', set);
-//page('/set/:ID/edit', edit);
+page('/set/:ID/edit', edit);
 
 //default route
 page(welcome);

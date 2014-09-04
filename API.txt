@@ -120,7 +120,7 @@ POST /api/sets/join
         - already part of set - errors : [alreadySetMember]
 
 PUT /api/sets/:SID
-    about: edit a particular packet set
+    about: edit a particular packet set (only Admins and Directors)
     in: {<name>, <password>, <target (format is YYYY-MM-DD HH:mm:ss)>, <info> <markdown?>, 
         <subjectsAdd> : [[name, TU, B] <zero default>...],
         <subjectsUpdate> : [[SBID, name, TU, B] <zero default>...],
@@ -141,19 +141,18 @@ PUT /api/sets/:SID
 GET /api/sets/:SID
     about: get complete information for a set
     in: {}
-    data: {<default>, data : {set : {name, password, directorID, directorUsername, directorName, creationDate, targetDate, info <markdown?>, subjects, config, schema, visibility}}}
+    data: {<default>, data : {set : {name, password, directorID, directorUsername, directorName, creationDate, targetDate, info <markdown?>, subjects <includes SBID, name, TUs, Bonuses>, config, schema, visibility}}}
     error:
         - not authenticated - errors : [notLoggedIn]
         - no permissions for set - errors : [noPerms]
 
-DELETE /api/sets/:SID
+DELETE /api/sets/:SID (only Admins and Directors)
     about: completely delete a set including data
     in: {}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no administrator permissions for set
+        - not authenticated - errors : [notLoggedIn]
+        - set invalid or no perms - errors : [noPerms]
         
 GET /api/sets/:SID/role
     about: get your role for a given set (director/administrator/editor/writer)
@@ -185,22 +184,25 @@ GET /api/sets/:SID/subjects
 GET /api/sets/:SID/members
     about: get all members belonging to a given set
     in: {}
-    data: {<default>, data : [{name, username, role, [subjects]}...]}
+    data: {<default>, data : [members : [{MID, name, username, role, focus : [[SBID, name, TU, B]...]}...]}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
+        - not authenticated - errors : [notLoggedIn]
+        - set invalid or no perms - errors : [noPerms]
         
 PUT /api/sets/:SID/members/:MID
     about: set the role or subject foci of a given user
-    in: {role || [subjects]}
+    in: {<role>, <subjects>}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
-        - role is not admin or director
-        - user is not part of set
+        - not authenticated - errors : [notLoggedIn]
+        - set invalid or no privileged perms - errors : [noPerms]
+        - user is not part of set - errors : [noSuchMember]
+        - user is editing themselves - errors : [cannotEditSelf]
+        - invalid or impermissible role change - errors : [parameter] + param
+        - invalid subject provided - errors : [noSuchSubject]
+    behaviors:
+        - if role is not Editor or changed to it then subjects is ignored
+        - focus field is blanked if not explicitly provided with Editor role
 
 TODO: GET /api/sets/:SID/stats
     about: get statistics for a given set
@@ -208,7 +210,6 @@ TODO: GET /api/sets/:SID/stats
     data: {<default>, data : (TBD)}
     error: TBD
 
-TODO: Import
 TODO: Duplicate Search
 TODO: Notifications
 TODO: Flag Question

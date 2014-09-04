@@ -1,4 +1,93 @@
 <div class="storage">
+  <div class="modal-storage">
+    <div class="modal" id="remove-subject-modal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Remove Subject</h4>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this subject? The given subject will be removed from all associated tossups and bonuses. This action is irreversible.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-danger" id="confirm-remove-subject" data-id="0">Confirm</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /#remove-subject-modal -->
+    <div class="modal" id="update-subject-modal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Update Subject</h4>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+              <span class="input-group-addon">Subject Name</span> <input type="text" class="form-control" id="update-subject" placeholder="Name here.">
+            </div><br>
+            <div class="input-group">
+              <span class="input-group-addon">Tossup Count</span><input type="text" class="form-control" id="update-subject-TU" placeholder="Number here.">
+            </div><br>
+            <div class="input-group">
+              <span class="input-group-addon">Bonus Count</span><input type="text" class="form-control no-margin-bc" id="update-subject-B" placeholder="Number here.">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" id="confirm-update-subject" data-id="0">Update</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /#update-subject-modal -->
+    <div class="modal" id="delete-set-modal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Delete Set</h4>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete this set and all of its data? This action is entirely irreversible. There is <b>nothing</b> I can do if you decide to go ahead and click the submit button. Absolutely nothing.
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-info" id="confirm-delete-set">Confirm</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /#delete-set-modal -->
+    <div class="modal" id="update-member-modal">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Update Member</h4>
+          </div>
+          <div class="modal-body">
+            <div class="input-group">
+              <span class="input-group-addon">Role</span>
+              <select class="form-control" id="update-member-role">
+                <option value="Writer">Writer</option>
+                <option value="Editor">Editor</option>
+                <option value="Administrator">Administrator</option>
+              </select>
+            </div>
+            <div class="form-group no-margin-bc"><br>
+              <select multiple class="form-control" id="update-member-focus">
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-default" id="confirm-update-member" data-id="0">Update</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /#update-member-modal -->
+  </div>
   <div class="menu-storage">
     <ul class="nav navbar-nav logged-out link-group">
       <li class="welcome active"><a href="/">Welcome</a></li>
@@ -16,7 +105,6 @@
     <ul class="nav navbar-nav set-normal link-group">
       <li class="set active"><a href="/set/:SID">Set</a></li>
       <li class="stats"><a href="/set/:SID/stats">Stats</a></li>
-      <li class="import"><a href="/set/:SID/import">Import</a></li>
       <li class="tossups"><a href="/set/:SID/tossups">Tossups</a></li>
       <li class="bonuses"><a href="/set/:SID/bonuses">Bonuses</a></li>
       <li class="packets"><a href="/set/:SID/packets">Packets</a></li>
@@ -26,7 +114,6 @@
       <li class="set active"><a href="/set/:SID">Set</a></li>
       <li class="edit"><a href="/set/:SID/edit">Edit</a></li>
       <li class="stats"><a href="/set/:SID/stats">Stats</a></li>
-      <li class="import"><a href="/set/:SID/import">Import</a></li>
       <li class="tossups"><a href="/set/:SID/tossups">Tossups</a></li>
       <li class="bonuses"><a href="/set/:SID/bonuses">Bonuses</a></li>
       <li class="packets"><a href="/set/:SID/packets">Packets</a></li>
@@ -146,9 +233,9 @@
     </div><!-- /.forgot -->
     <div class="dashboard">
       <div class="col-md-9 banner">
-        <div class="panel panel-default dashboard-sets-panel">
-          <div class="panel-body panel-table dashboard-sets-body">
-            <table class="table" id="dashboard-sets"></table>
+        <div class="panel panel-default">
+          <div class="panel-body panel-table">
+            <table class="table table-striped" id="dashboard-sets"></table>
           </div>
         </div>
       </div>
@@ -237,10 +324,14 @@
             <div class="form-group">
               <input type="text" class="form-control" id="create-bonuses" placeholder="Bonuses per packet.">
             </div>
-            <div class="form-group">                  
+            <div class="form-group no-margin-bc">                  
               <input type="text" class="form-control" id="create-packets" placeholder="Number of packets.">
             </div>
-            <button type="submit" class="btn btn-default btn-block" id="create-button">Create Set</button> 
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <button type="submit" class="btn btn-success btn-block" id="create-button">Create Set</button> 
           </div>
         </div>
       </div>
@@ -308,8 +399,8 @@
     <div class="set">
       <div class="col-md-8 banner">
         <div class="panel panel-default">
-          <div class="panel-body">
-            Member shit goes here.
+          <div class="panel-body panel-table">
+            <table class="table table-striped" id="set-members"></table>
           </div>
         </div>
       </div>
@@ -327,21 +418,112 @@
         <div class="panel panel-default">
           <div class="panel-body text-center">
             <ol class="breadcrumb margin-bottom-bc">
-              Set ID: <li><b id="set-ID-box">12345</b></li>
+              Unique Set ID: <b id="set-ID-box">12345</b>
             </ol>
             <ol class="breadcrumb no-margin-bc">
-              Set Password: <li><b id="set-password-box">passw0rd</b></li>
+              Set Password: <b id="set-password-box" class="tip" data-my="bottom center" data-at="top center">Hover To See</b><div class="hide">passw0rd</div>
             </ol>
           </div>
         </div>
         <div class="panel panel-default">
           <div class="panel-body text-center">
             Target Date: <span id="set-target-box">None Set</span><br>
-            Set Visibility: <span id="set-visibility-box">Searchable</span><br>
             Set Director: <span id="set-director-box">John Doe</span><br>
+            Set Visibility: <span id="set-visibility-box">Searchable</span><br>
+            Set Format Schema: <span id="set-schema-box">RCQB</span>
           </div>
         </div>
       </div>
     </div><!-- /.set -->
+    <div class="edit"><form id="edit-form">
+      <div class="col-md-8 banner">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                The following form can be used to edit a set that already exists. The restrictions applied at packet creation are still in place. Note that you only need to edit the fields you would like to change; other fields may have been filled for you already.
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="edit-name" placeholder="Enter set name.">
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="edit-info" placeholder="Enter set description.">
+                </div>
+                <div class="form-group">
+                  <div class="input-group" id="target-date">
+                    <input type="text" class="form-control" id="edit-target" placeholder="Enter set target date." data-date-format="YYYY-MM-DD HH:mm:ss">
+                    <span class="input-group-addon">
+                      <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                  </div>
+                </div>
+                <input type="text" class="form-control" id="edit-password" placeholder="Enter set access password.">
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="form-group">
+                  <select class="form-control" id="edit-schema">
+                    <option value="RCQB">RCQB Formatting</option>
+                    <option value="ACF">ACF Formatting</option>
+                    <option value="RCSB">RCSB Formatting</option>
+                    <option value="NSB">NSB Formatting</option>
+                  </select>
+                </div>
+                <select class="form-control" id="edit-visibility">
+                  <option value="false">Not Searchable</option>
+                  <option value="true">Searchable</option>
+                </select>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="edit-subject" placeholder="Enter subject name.">
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="edit-subject-TU" placeholder="Subject tossups per packet.">
+                </div>
+                <div class="form-group">
+                  <input type="text" class="form-control" id="edit-subject-B" placeholder="Subject bonuses per packet.">
+                </div>
+                <button type="submit" class="btn btn-default btn-block" id="edit-subject-button">Add Subject</button> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="panel panel-default">
+          <div class="panel-body text-center none-added" id="subject-list">
+            No subjects added.
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="form-group">
+              <input type="text" class="form-control" id="edit-tossups" placeholder="Tossups per packet.">
+            </div>
+            <div class="form-group">
+              <input type="text" class="form-control" id="edit-bonuses" placeholder="Bonuses per packet.">
+            </div>
+            <div class="form-group no-margin-bc">
+              <input type="text" class="form-control" id="edit-packets" placeholder="Number of packets.">
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <button type="submit" class="btn btn-success btn-block" id="edit-button">Save Edits</button>
+            <button class="btn btn-danger btn-block" id="edit-delete-button">Delete Set</button>
+          </div>
+        </div>
+      </div>
+    </form></div><!-- /.edit -->
   </div>
 </div>

@@ -51,7 +51,25 @@ module.exports = {
                         set.directorUsername = user.username;
                         set.ID = set['_id']; delete set['_id'];
                         
-                        res.status(200).send(response(true, {set : set}));
+                        var subjectIndex = 0;
+                        async.eachSeries(set.subjects, function(subject, next) {
+                            DB.subjects.findOne({'_id' : subject}, function(err, doc) {
+                                if (err) { console.log(err); throw err; }
+                                set.subjects[subjectIndex] = [
+                                    doc['_id'],
+                                    doc.subject,
+                                    doc.countTU,
+                                    doc.countB
+                                ];
+                                
+                                //fake iterator
+                                subjectIndex += 1;
+                                
+                                next();
+                            });
+                        }, function() {
+                            res.status(200).send(response(true, {set : set}));
+                        });
                     });
                 });
             }
@@ -68,7 +86,16 @@ module.exports = {
         var UID = req.session.ID;
         var SID = parseInt(req.params.SID);
         
-        DB.permissions.findOne({userID : UID, '_id' : SID}, function(err, doc) {
+        var targetPerm = {
+            userID : UID,
+            setID : SID,
+            role : {$in : [
+                'Director',
+                'Administrator'
+            ]}
+        };
+        
+        DB.permissions.findOne(targetPerm, function(err, doc) {
             if (err) { console.log(err); throw err; }
             
             else if (doc ===  null) {
@@ -177,8 +204,8 @@ module.exports = {
                     }
                 }
                 
-                //store subjects
-                var subjects = []
+                //store new subjects
+                var subjectsAdd = []
                 
                 //process new subjects from request
                 if ('subjectsAdd' in req.body &&
@@ -207,7 +234,7 @@ module.exports = {
                             //truncate, not round, to two decimal places
                             subject[1] = Math.floor(subject[1] * 100) / 100;
                             subject[2] = Math.floor(subject[2] * 100) / 100;
-                            subjects.push(subject); //add to list of valid subjects
+                            subjectsAdd.push(subject); //add to list of valid subjects
                         }
                     });
                     
@@ -294,6 +321,15 @@ module.exports = {
                 var subjects = [];
                 
                 async.waterfall([
+                    //get existing subjects
+                    function(callback) {
+                        DB.subjects.find({setID : SID}, function(err, docs) {
+                            if (err) { console.log(err); throw err; }
+                            subjects = tools.map(docs, function(doc) { return doc['_id']; });
+                            callback(null);
+                        });
+                    },
+                    
                     //add new subjects
                     function(callback) {
                         async.eachSeries(subjectsAdd, function(subject, next) {
@@ -304,7 +340,7 @@ module.exports = {
                                 subjects.push(ID);
                                 
                                 var subjectAdd = {
-                                    _id : ID,
+                                    '_id' : ID,
                                     setID : SID,
                                     subject : subject[0],
                                     countTU : subject[1],
@@ -327,13 +363,13 @@ module.exports = {
                                 setID : SID                                
                             };
                             
-                            var updateSubject = {$inc : {
+                            var updateSubject = {$set : {
                                 subject : subject[1],
                                 countTU : subject[2],
                                 countB : subject[3]  
                             }};
                             
-                            DB.subjects.update(targetSubject, updateSubject, function(err, num) {
+                            DB.subjects.update(targetSubject, updateSubject, {}, function(err, num) {
                                 if (err) { console.log(err); throw err; }
                                 
                                 if (num === 0) {
@@ -351,8 +387,8 @@ module.exports = {
                     
                     //delete old subjects
                     function(callback) {
-                        subjects = tools.without(subjects, subject);
                         async.eachSeries(subjectsRemove, function(subject, next) {
+                            subjects = tools.without(subjects, subject);
                             async.waterfall([
                                 function(callback) {
                                     var targetSub = {
@@ -379,7 +415,7 @@ module.exports = {
                                 function(callback) {
                                     var targetTUs = {subjectID : subject};
                                     var upd = {$set : {subjectID : null}};
-                                    DB.tossups.update(targetTUs, upd, function(err, num) {
+                                    DB.tossups.update(targetTUs, upd, {multi : true}, function(err, num) {
                                         if (err) { console.log(err); throw err; }
                                         callback(null);
                                     });
@@ -389,7 +425,7 @@ module.exports = {
                                 function(callback) {
                                     var targetBs = {subjectID : subject}
                                     var upd = {$set : {subjectID : null}};
-                                    DB.bonuses.update(targetBs, upd, function(err, num) {
+                                    DB.bonuses.update(targetBs, upd, {multi : true}, function(err, num) {
                                         if (err) { console.log(err); throw err; }
                                         callback(null);
                                     });
@@ -399,7 +435,7 @@ module.exports = {
                     },
                     
                     function(callback) {
-                        editSet.subjects = subjects;
+                        editSet.subjects = tools.uniq(subjects);
                         var update = {$set : editSet}
                         
                         DB.sets.update({'_id' : SID}, update, function(err, num) {
@@ -422,7 +458,101 @@ module.exports = {
     },
     
     remove : function(req, res) {
-    
+        if (req.session.authorized !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.notLoggedIn]
+            })); return false;
+        }
+        
+        var UID = req.session.ID;
+        var SID = parseInt(req.params.SID);
+        
+        var targetPerm = {
+            userID : UID,
+            setID : SID,
+            role : {$in : [
+                'Director',
+                'Administrator'
+            ]}
+        };
+        
+        DB.permissions.findOne(targetPerm, function(err, doc) {
+            if (err) { console.log(err); throw err; }
+            
+            else if (doc ===  null) {
+                res.status(200).send(response(false, {
+                    errors : [error.noPerms]
+                })); return false;
+            }
+            
+            else {
+                //removes: sets/subjects/permissions/tossups/bonuses/messages/flags/notifs
+                //I just really really hope the user actually meant to do this
+                
+                async.waterfall([
+                    function(callback) {
+                        DB.sets.remove({'_id' : SID}, {multi : true}, function(err, num) {
+                            if (err) { console.log(err); throw err; }
+                            callback(null);
+                        });
+                    },
+                    
+                    function(callback) {
+                        DB.subjects.remove({setID : SID}, {multi : true}, function(err, num) {
+                            if (err) { console.log(err); throw err; }
+                            callback(null);
+                        });
+                    },
+                    
+                    function(callback) {
+                        DB.permissions.remove({setID : SID}, {multi : true}, function(err, num) {
+                            if (err) { console.log(err); throw err; }
+                            callback(null);
+                        });
+                    },
+                    
+                    function(callback) {
+                        DB.tossups.remove({setID : SID}, {multi : true}, function(err, num) {
+                            if (err) { console.log(err); throw err; }
+                            callback(null);
+                        });
+                    },
+                    
+                    function(callback) {
+                        DB.bonuses.remove({setID : SID}, {multi : true}, function(err, num) {
+                            if (err) { console.log(err); throw err; }
+                            callback(null);
+                        });
+                    },
+                    
+                    function(callback) {
+                        DB.messages.remove({setID : SID}, {multi : true}, function(err, num) {
+                            if (err) { console.log(err); throw err; }
+                            callback(null);
+                        });
+                    },
+                    
+                    function(callback) {
+                        DB.flags.remove({setID : SID}, {multi : true}, function(err, num) {
+                            if (err) { console.log(err); throw err; }
+                            callback(null);
+                        });
+                    },
+                    
+                    function(callback) {
+                        DB.notifications.remove({setID : SID}, {multi : true}, function(err, num) {
+                            if (err) { console.log(err); throw err; }
+                            callback(null);
+                        });
+                    },
+                    
+                    function(callback) {
+                        //succesful delete of absolutely everything
+                        res.status(200).send(response(true, {}));
+                    }
+                ]);
+            }
+        });
     },
     
     role : function(req, res) {
@@ -518,7 +648,7 @@ module.exports = {
                     }
                     
                     else {                      
-                        var subjects = _.each(docs, function(subject) {
+                        var subjects = tools.map(docs, function(subject) {
                             return [
                                 subject['_id'],
                                 subject.subject,

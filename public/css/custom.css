@@ -12,15 +12,12 @@ a {
     text-decoration: none !important;
 }
 
-html {
-    overflow-y: scroll;
-}
-
 select {
     border-radius: 0px !important;
 }
 
 body {
+    overflow-y: scroll;
     padding-top: 20px;
     padding-bottom: 20px;
     background-image: url(images/stripe.gif);
@@ -71,3 +68,7 @@ body {
 .margin-bottom-bc {
     margin: 0 0 15px 0 !important;
 }
+
+/*.modal p {
+    margin-bottom: 0px;
+}*/

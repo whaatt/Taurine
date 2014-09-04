@@ -7,6 +7,7 @@ var errors = {
     badSubjectName : 'One or more of your subject names was too long. Please try again.',
     badSubjectNumbers : 'One or more of your subject question numbers was invalid or too large. Please try again.',
     blank : function(name) { return 'Your ' + name + ' parameter cannot be blank. Please try again.'; },
+    cannotEditSelf : 'You cannot edit your own member information.',
     database : 'An unknown database error occurred. Please try again.',
     duplicate : 'That username is already taken! Please try again.',
     length : function(name) { return 'Your ' + name + ' parameter was too long or too short. Please try again.'; },
@@ -18,6 +19,7 @@ var errors = {
     noPerms : 'You do not have permission to access this resource.',
     noSuchConfirm : 'No such confirmation ID exists. Please try again.',
     noSuchCreds : 'No such user credentials exist. Please try again.',
+    noSuchMember : 'No such member belongs to this set. Please try again.',
     noSuchSet : 'The specified set was not found. Please try again.',
     noSuchSubject : 'One or more of your specified subjects does not exist.',
     parameter : function(name) { return 'Your ' + name + ' parameter did not adhere to its requirements. Please try again.'; },
@@ -28,8 +30,10 @@ var errors = {
 
 var success = {
     account : 'Your account information has been updated.',
+    del : 'Your set was successfully deleted. Hope you meant to do that.',
     confirm : 'Your registration was successfully confirmed. You may now log in.',
     create : 'Your set has been successfully created. Please visit the dashboard.',
+    edit : 'Your set has been successfully edited. Please reload to edit again.',
     forgot : 'Please check your email for the information you requested.',
     join : 'You have successfully joined this set. Please visit the dashboard.',
     login : 'You have successfully logged in.',
