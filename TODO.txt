@@ -8,7 +8,8 @@
 
 feature roadmap:
 - user global stats
-- ACF import
+- import feature
+- unique invite IDs
 
 installing on a custom server
 
@@ -20,8 +21,8 @@ installing on a custom server
         Admin name --> used in confirmation email
         Admin email --> used in confirmation email
       in package.json to match your site.
-    - Edit /public/index.html for custom text.
-    - Edit /helpers/error.js for custom errors.
+    - Edit /public/fragments.html for custom text.
+    - Edit /public/js/definitions.js for custom errors.
     - Edit base path in /public/js/requests.js.
     - Enjoy!
 

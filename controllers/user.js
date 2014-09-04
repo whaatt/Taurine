@@ -219,7 +219,7 @@ module.exports = {
                     }
                     
                     else {
-                        DB.users.update(target, {$set : {confirmed : true}}, function(err, num) {
+                        DB.users.update(target, {$set : {confirmed : true}}, {}, function(err, num) {
                             if (err) { console.log(err); throw err; }
                             
                             else {
@@ -271,7 +271,7 @@ module.exports = {
                                 req.session.username = docs[0].username;
                                 res.status(200).send(response(true, {}));
                                 
-                                DB.users.update({username : username}, {$unset : {temporary : true}}, function() {
+                                DB.users.update({username : username}, {$unset : {temporary : true}}, {}, function() {
                                     //we do not care about the error here
                                 }); return true;
                             }
@@ -375,7 +375,7 @@ module.exports = {
                     else {
                         var randomPass = DB.random();
                         DB.hash(randomPass, function(err, hash) {
-                            DB.users.update({username : username}, {$set : {temporary : hash}}, function(err, num){
+                            DB.users.update({username : username}, {$set : {temporary : hash}}, {}, function(err, num){
                                 if (err) { console.log(err); throw err; }
                                 
                                 else {
@@ -433,7 +433,8 @@ module.exports = {
                 res.status(200).send(response(true, {user : {
                     username : docs[0].username,
                     email : docs[0].email,
-                    name : docs[0].name
+                    name : docs[0].name,
+                    ID : docs[0]['_id']
                 }}));
             }
         });
@@ -507,7 +508,7 @@ module.exports = {
                     //get hashed password
                     update.password = hash;
                     
-                    DB.users.update({username : req.session.username}, {$set : update}, function(err, num) {
+                    DB.users.update({username : req.session.username}, {$set : update}, {}, function(err, num) {
                         if (err) { console.log(err); throw err; }
                 
                         res.status(200).send(response(true, {
@@ -520,7 +521,7 @@ module.exports = {
         }
         
         else {
-            DB.users.update({username : req.session.username}, {$set : update}, function(err, num) {
+            DB.users.update({username : req.session.username}, {$set : update}, {}, function(err, num) {
                 if (err) { console.log(err); throw err; }
         
                 res.status(200).send(response(true, {

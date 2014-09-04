@@ -26,9 +26,11 @@
     "body-parser": "^1.6.5",
     "express": "^4.8.5",
     "express-session": "^1.7.6",
+    "html-entities": "^1.1.1",
     "moment": "^2.8.2",
     "nedb": "^0.11.0",
     "nodemailer": "^1.2.1",
+    "traverse": "^0.6.6",
     "underscore": "^1.6.0",
     "validator": "^3.17.0"
   },
