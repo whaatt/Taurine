@@ -7,9 +7,10 @@
 8. Document the client side more.
 
 feature roadmap:
-- user global stats
 - import feature
+- duplicate finder
 - unique invite IDs
+- user global stats
 
 installing on a custom server
 
@@ -44,7 +45,15 @@ statistics:
 - questions (TU/Bonus) by subject - subject, TUs, Bonuses, TU Need, Bonus Need, TU App, Bonus App
 - questions (TU/Bonus) by user - subject, TUs, Bonuses, TU App, Bonus App
 - editor stats - TU App, Bonus App, Unique TU Edits, Unique Bonus Edits
-    
+
+notifications
+
+- someone edited your question (edit)
+- someone left you a comment or issue (message)
+- someone replies to a message you left (reply)
+- someone resolves an issue you left (resolve)
+- someone approved your question (approve)
+
 Geography - 3/3
 Math - 0.5/1
 etc...
@@ -65,11 +74,9 @@ Database (ID is actually _id):
 - Tossups
     {ID, setID, subjectID, difficulty, question, answer, approved, approvedByID, duplicates}
 - Bonuses
-    {ID, setID, subjectID, difficulty, lead, questions, answers, approved, approvedByID, duplicates}
+    {ID, setID, subjectID, difficulty, lead, questions, answers, approved, approvedByID}
 - Messages
-    {ID, userID, type, setID, questionID, message, date}
-- Flags
-    {ID, userID, type, setID, questionID}
+    {ID, userID, type, setID, questionType, questionID, message, date}
 - Notifications
-    {ID, type, setID, questionType, questionID, userID, editorID}
+    {ID, type, setID, questionType, questionID, userID, ownerID, read}
 - Counters

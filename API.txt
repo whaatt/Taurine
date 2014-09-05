@@ -64,7 +64,7 @@ POST /api/user/forgot
 GET /api/user
     about: get your basic info
     in: {}
-    data: {<default>, data : {username, email, name}}
+    data: {<default>, data : {ID, username, email, name, unread}}
     error:
         - not authenticated - errors : [notLoggedIn]
         
@@ -204,18 +204,37 @@ PUT /api/sets/:SID/members/:MID
         - if role is not Editor or changed to it then subjects is ignored
         - focus field is blanked if not explicitly provided with Editor role
 
-TODO: GET /api/sets/:SID/stats
+GET /api/sets/:SID/stats
     about: get statistics for a given set
     in: {}
     data: {<default>, data : (TBD)}
     error: TBD
 
-TODO: Duplicate Search
-TODO: Notifications
-TODO: Flag Question
+GET /api/user/notifications
+    about: get your notifications
+    in: {}
+    data: {<default> data : {notifications : [[ID, type, setID, questionType, questionID, userID, ownerID, ownerName, ownerUsername, read]...]}}
+    error:
+        - not authenticated - errors : [notLoggedIn]
+    
+POST /api/user/notifications/:NID/read
+    about: mark notification as read
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated - errors : [notLoggedIn]
+        - notification does not exist or is not yours - errors : [noSuchNotification]
 
+DELETE /api/user/notifications/:NID
+    about: delete a notification
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated - errors : [notLoggedIn]
+        - notification does not exist or is not yours - errors : [noSuchNotification]
+    
 GET /api/sets/:SID/tossups
-    about: get a list of tossups (ID/<tossup>/answer/difficulty/approved/duplicate/creator/editor/flagState)
+    about: get a summary list of tossups (ID/answer/difficulty/approved/duplicate/creator/editor)
     in: {}
     data: {<default>, data: [tossupInfo]}
     error:
@@ -231,7 +250,7 @@ GET /api/sets/:SID/tossups/:TID
         - not authenticated
         - set does not exist
         - no permissions for set
-
+        
 POST /api/sets/:SID/tossups
     about: create tossups for a given set
     in: {subject, difficulty, question, answer}
@@ -264,6 +283,18 @@ DELETE /api/sets/:SID/tossups/:TID
         - not creator of question
         - not editor or administrator
 
+POST /api/sets/:SID/tossups/:TID/approve
+    about: approve a given tossup
+    in: {}
+    data: {<default>}
+    error: TBD
+
+POST /api/sets/:SID/tossups/duplicate
+    about: leave a message saying that multiple tossups are duplicated
+    in: {tossups : [TID...]}
+    data: {<default>}
+    error: TBD
+    
 POST /api/sets/:SID/tossups/:TID/message
     about: leave a message and notify users with flags
     in: {message}
@@ -272,6 +303,16 @@ POST /api/sets/:SID/tossups/:TID/message
         - not authenticated
         - set does not exist
         - no permissions for set
+
+POST /api/sets/:SID/tossups/:TID/message/:MID/resolve
+    about: resolve an issue message
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        - etc...
         
 DELETE /api/sets/:SID/tossups/:TID/message/:MID
     about: delete a message
@@ -336,6 +377,18 @@ DELETE /api/sets/:SID/bonuses/:BID
         - not creator of question
         - not editor or administrator
 
+POST /api/sets/:SID/bonuses/:BID/approve
+    about: approve a given bonus
+    in: {}
+    data: {<default>}
+    error: TBD
+
+POST /api/sets/:SID/bonuses/duplicate
+    about: leave a message saying that multiple bonuses are duplicated
+    in: {bonuses : [BID...]}
+    data: {<default>}
+    error: TBD
+    
 POST /api/sets/:SID/bonuses/:BID/message
     about: leave a message and notify users with flags
     in: {message}
@@ -345,6 +398,16 @@ POST /api/sets/:SID/bonuses/:BID/message
         - set does not exist
         - no permissions for set
 
+POST /api/sets/:SID/bonuses/:BID/message/:MID/resolve
+    about: resolve an issue message
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated
+        - set does not exist
+        - no permissions for set
+        - etc...
+        
 DELETE /api/sets/:SID/bonuses/:BID/message/:MID
     about: delete a message
     in: {}

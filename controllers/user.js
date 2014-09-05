@@ -430,12 +430,17 @@ module.exports = {
             if (err) { console.log(err); throw err; }
             
             else {
-                res.status(200).send(response(true, {user : {
-                    username : docs[0].username,
-                    email : docs[0].email,
-                    name : docs[0].name,
-                    ID : docs[0]['_id']
-                }}));
+                var unread = {userID : req.session.ID, read : false};
+                DB.notifications.count(unread, function(err, count) {
+                    if (err) { console.log(err); throw err; }
+                    res.status(200).send(response(true, {user : {
+                        username : docs[0].username,
+                        email : docs[0].email,
+                        name : docs[0].name,
+                        ID : docs[0]['_id'],
+                        unread : count
+                    }}));
+                });
             }
         });
     },
@@ -528,6 +533,93 @@ module.exports = {
                     name : update.name,
                     email : update.email
                 }));
+            });
+        }
+        
+    },
+    
+    notifications : {
+        
+        info : function(req, res) {
+            if (req.session.authorized !== true) {
+                res.status(200).send(response(false, {
+                    errors : [error.notLoggedIn]
+                })); return false;
+            }
+            
+            var noteTarget = {userID : req.session.ID}
+            DB.notifications.find(noteTarget, function(err, docs) {
+                if (err) { console.log(err); throw err; }
+                var notifications = [];
+                async.eachSeries(docs, function(note, next) {
+                    DB.users.findOne({'_id' : ownerID}, function(err, doc) {
+                        if (err) { console.log(err); throw err; }
+                        note.ownerName = doc.name;
+                        note.ownerUsername = doc.username;
+                        notifications.push(note); next();
+                    });
+                }, function() {
+                    //should the parameter name be different? it is kind of long...
+                    res.status(200).send(response(true, {notifications : notifications}));
+                });
+            });
+        },
+        
+        read : function(req, res) {
+            if (req.session.authorized !== true) {
+                res.status(200).send(response(false, {
+                    errors : [error.notLoggedIn]
+                })); return false;
+            }
+            
+            var UID = req.session.UID;
+            var NID = req.params.NID;
+            
+            var target = {'_id' : NID, userID : UID};
+            DB.notifications.findOne(target, function(err, doc) {
+                if (err) { console.log(err); throw err; }
+                
+                else if (doc === null) {
+                    res.status(200).send(response(false, {
+                        errors : [error.noSuchNotification]
+                    })); return false;
+                }
+                
+                else {
+                    DB.notifications.update(target, {$set : {read : true}}, function(err, num) {
+                        if (err) { console.log(err); throw err; }
+                        res.status(200).send(response(true, {}));
+                    });
+                }
+            });
+        },
+        
+        remove : function(req, res) {
+            if (req.session.authorized !== true) {
+                res.status(200).send(response(false, {
+                    errors : [error.notLoggedIn]
+                })); return false;
+            }
+            
+            var UID = req.session.UID;
+            var NID = req.params.NID;
+            
+            var target = {'_id' : NID, userID : UID};
+            DB.notifications.findOne(target, function(err, doc) {
+                if (err) { console.log(err); throw err; }
+                
+                else if (doc === null) {
+                    res.status(200).send(response(false, {
+                        errors : [error.noSuchNotification]
+                    })); return false;
+                }
+                
+                else {
+                    DB.notifications.remove(target, function(err, num) {
+                        if (err) { console.log(err); throw err; }
+                        res.status(200).send(response(true, {}));
+                    });
+                }
             });
         }
         

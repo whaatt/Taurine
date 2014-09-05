@@ -46,6 +46,10 @@ body {
     color: #fff !important;
 }
 
+.navbar-text {
+    color: #fff !important;
+}
+
 .panel {
     word-wrap: break-word;
     border: 2px solid #555;

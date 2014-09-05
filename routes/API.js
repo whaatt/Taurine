@@ -28,9 +28,10 @@ var router = express.Router();
         router.get('/user', user.info); //get your own info
         router.post('/user/edit', user.edit); //edit user
         
-        //TODO: user notifications
-        //TODO: user global stats
-    
+        router.get('/user/notifications', user.notifications.info); //get user notifications
+        router.post('/user/notifications/:NID/read', user.notifications.read); //mark as read
+        router.delete('/user/notifications/:NID', user.notifications.remove); //delete notification
+        
     /* Set Routes */
     
         router.get('/sets', sets.all); //get all your sets
@@ -53,18 +54,24 @@ var router = express.Router();
         router.get('/sets/:SID/tossups/:TID', sets.set.tossups.get); //get specific TU
         router.post('/sets/:SID/tossups', sets.set.tossups.create); //create new TU
         router.put('/sets/:SID/tossups/:TID', sets.set.tossups.edit); //edit existing TU
+        router.post('/sets/:SID/tossups/:TID/approve', sets.set.tossups.approve); //approve TU
+        router.post('/sets/:SID/tossups/duplicate', sets.set.tossups.duplicate); //mark dupes
         router.delete('/sets/:SID/tossups/:TID', sets.set.tossups.remove); //remove TU
         
         router.post('/sets/:SID/tossups/:TID/message', sets.set.tossups.message.create); //add message to TU
+        router.post('/sets/:SID/tossups/:TID/message/:MID/resolve', sets.set.tossups.message.resolve); //resolve message
         router.delete('/sets/:SID/tossups/:TID/message/:MID', sets.set.tossups.message.remove); //remove message
         
         router.get('/sets/:SID/bonuses', sets.set.bonuses.info); //get set BN info
         router.get('/sets/:SID/bonuses/:BID', sets.set.bonuses.get); //get specific BN
         router.post('/sets/:SID/bonuses', sets.set.bonuses.create); //create new BN
         router.put('/sets/:SID/bonuses/:BID', sets.set.bonuses.edit); //edit existing BN
+        router.post('/sets/:SID/bonuses/:BID/approve', sets.set.bonuses.approve); //approve BN
+        router.post('/sets/:SID/bonuses/duplicate', sets.set.bonuses.duplicate); //mark dupes
         router.delete('/sets/:SID/bonuses/:BID', sets.set.bonuses.remove); //remove BN
         
         router.post('/sets/:SID/bonuses/:BID/message', sets.set.bonuses.message.create); //add message to BN
+        router.post('/sets/:SID/bonuses/:BID/message/:MID/resolve', sets.set.bonuses.message.resolve); //resolve message
         router.delete('/sets/:SID/bonuses/:BID/message/:MID', sets.set.bonuses.message.remove); //remove message
         
         router.post('/sets/:SID/packets', sets.set.packets.create); //create packets

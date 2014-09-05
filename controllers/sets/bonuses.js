@@ -28,9 +28,21 @@ module.exports = {
     
     },
     
+    approve : function(req, res) {
+    
+    },
+    
+    duplicate : function(req, res) {
+    
+    },
+    
     message : {
     
         create : function(req, res) {
+        
+        },
+        
+        resolve : function(req, res) {
         
         },
 

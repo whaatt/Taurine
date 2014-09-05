@@ -20,6 +20,7 @@ var errors = {
     noSuchConfirm : 'No such confirmation ID exists. Please try again.',
     noSuchCreds : 'No such user credentials exist. Please try again.',
     noSuchMember : 'No such member belongs to this set. Please try again.',
+    noSuchNotification : 'No corresponding notification was found. Please try again.',
     noSuchSet : 'The specified set was not found. Please try again.',
     noSuchSubject : 'One or more of your specified subjects does not exist.',
     parameter : function(name) { return 'Your ' + name + ' parameter did not adhere to its requirements. Please try again.'; },

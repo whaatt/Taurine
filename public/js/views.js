@@ -72,8 +72,12 @@ function setContent(className) {
     tip();
 }
 
-function setUsername(username) {
-    $('.user').html(username + '<a href="' + base + '/notifications"><span class="badge" id="notify-count">12</span></a>');
+function setUsername(username, notifs) {
+    $('.user').html(username);
+    if (typeof notifs !== 'number' || notifs === 0)
+        $('#notify-count').html('0');
+    else
+        $('#notify-count').html(notifs.toString());
 }
 
 function setMenuContext(type, options) {

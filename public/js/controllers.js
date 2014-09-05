@@ -27,12 +27,14 @@ function logState(ctx, next) {
         if ('errors' in reply.data &&
             $.inArray(reply.data.errors, 'notLoggedIn')){
             signed = false; //not signed in
+            setUsername('Anonymous');
             delete state.user;
         }
         
         else {
             signed = true; //signed in
-            state.user = reply.data.user;
+            state.user = reply.data.user; //global user variable
+            setUsername(state.user.username, state.user.unread);
         }
         
         //reset matched
@@ -92,7 +94,7 @@ function welcome(ctx, next) {
     }
     
     setMenuContext('logged-out');
-    setUsername('Anonymous');
+    //setUsername('Anonymous');
     
     setContent('welcome');
     setActiveMenuLink('welcome');
@@ -112,7 +114,7 @@ function confirm(ctx, next) {
     var CID = ctx.params.CID;
     
     setMenuContext('logged-out');
-    setUsername('Anonymous');
+    //setUsername('Anonymous');
     
     setContent('login');
     setActiveMenuLink('login');
@@ -140,7 +142,7 @@ function forgot(ctx, next) {
     }
     
     setMenuContext('logged-out');
-    setUsername('Anonymous');
+    //setUsername('Anonymous');
     
     setContent('forgot');
     setActiveMenuLink('forgot');
@@ -156,7 +158,7 @@ function login(ctx, next) {
     }
     
     setMenuContext('logged-out');
-    setUsername('Anonymous');
+    //setUsername('Anonymous');
     
     setContent('login');
     setActiveMenuLink('login');
@@ -172,7 +174,7 @@ function loginRedirect(ctx, next) {
     }
     
     setMenuContext('logged-out');
-    setUsername('Anonymous');
+    //setUsername('Anonymous');
     
     //set global redir to URL param
     redir = ctx.params.redir;
@@ -191,7 +193,7 @@ function register(ctx, next) {
     }
     
     setMenuContext('logged-out');
-    setUsername('Anonymous');
+    //setUsername('Anonymous');
     
     setContent('register');
     setActiveMenuLink('register');
@@ -209,7 +211,7 @@ function dashboard(ctx, next) {
     }
 
     setMenuContext('logged-in');
-    setUsername(state.user.username);
+    //setUsername(state.user.username);
     setActiveMenuLink('dashboard');
     
     makeGET('/api/sets', function(reply) {
@@ -261,7 +263,7 @@ function create(ctx, next) {
     }
 
     setMenuContext('logged-in');
-    setUsername(state.user.username);
+    //setUsername(state.user.username);
 
     setContent('create');
     setActiveMenuLink('create');
@@ -283,7 +285,7 @@ function join(ctx, next) {
     }
     
     setMenuContext('logged-in');
-    setUsername(state.user.username);
+    //setUsername(state.user.username);
 
     setContent('join');
     setActiveMenuLink('join');
@@ -299,7 +301,7 @@ function account(ctx, next) {
     }
     
     setMenuContext('logged-in');
-    setUsername(state.user.username);
+    //setUsername(state.user.username);
 
     setContent('account');
     setActiveMenuLink('account');
@@ -333,7 +335,7 @@ function logout(ctx, next) {
 function set(ctx, next) {
     //signed check handled by setState
     //menu is handled by setState
-    setUsername(state.user.username);
+    //setUsername(state.user.username);
     setActiveMenuLink('set');
     
     makeGET('/api/sets/' + state.SID, function(reply) {
@@ -443,7 +445,7 @@ function set(ctx, next) {
 function edit(ctx, next) {
     //signed check handled by setState
     //menu is handled by setState
-    setUsername(state.user.username);
+    //setUsername(state.user.username);
     setActiveMenuLink('edit');
     
     makeGET('/api/sets/' + state.SID, function(reply) {

@@ -16,7 +16,6 @@ if (!fs.existsSync(counterPath)) {
     var countDocs = [
         {_id : 'users', counter : 114252},
         {_id : 'sets', counter : 103281},
-        {_id : 'flags', counter : 1},
         {_id : 'subjects', counter : 1},
         {_id : 'permissions', counter : 1},
         {_id : 'tossups', counter : 103739},
@@ -93,7 +92,6 @@ module.exports = {
     tossups : tossups,
     bonuses : bonuses,
     messages : messages,
-    flags : flags,
     notifications : notifications
 
 }

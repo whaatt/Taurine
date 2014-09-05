@@ -377,7 +377,6 @@ $(document).on('click', '#edit-delete-button', function(event) {
 
 $(document).on('click', '#confirm-delete-set', function(event) {
     event.preventDefault();
-    $('#edit-delete-button').prop('disabled', true)
     
     if (deleteConfirm === 0) {
         $('#confirm-delete-set').html('Again');
@@ -403,11 +402,11 @@ $(document).on('click', '#confirm-delete-set', function(event) {
         makeDEL('/api/sets/' + state.SID, function(reply) {
             if (!reply.success) {
                 addErrors(reply.data.errors, reply.data.errorParams);
-                $('#edit-delete-button').prop('disabled', false);
             }
             
             else {
                 alerts.success.push(success.del);
+                $('#edit-delete-button').prop('disabled', true)
                 $('.modal').modal('hide'); page('/dashboard');
             }
         });
