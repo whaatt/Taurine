@@ -573,7 +573,7 @@ module.exports = {
             }
             
             var UID = req.session.UID;
-            var NID = req.params.NID;
+            var NID = parseInt(req.params.NID);
             
             var target = {'_id' : NID, userID : UID};
             DB.notifications.findOne(target, function(err, doc) {
@@ -602,7 +602,7 @@ module.exports = {
             }
             
             var UID = req.session.UID;
-            var NID = req.params.NID;
+            var NID = parseInt(req.params.NID);
             
             var target = {'_id' : NID, userID : UID};
             DB.notifications.findOne(target, function(err, doc) {

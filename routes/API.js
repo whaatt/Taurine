@@ -54,9 +54,11 @@ var router = express.Router();
         router.get('/sets/:SID/tossups/:TID', sets.set.tossups.get); //get specific TU
         router.post('/sets/:SID/tossups', sets.set.tossups.create); //create new TU
         router.put('/sets/:SID/tossups/:TID', sets.set.tossups.edit); //edit existing TU
-        router.post('/sets/:SID/tossups/:TID/approve', sets.set.tossups.approve); //approve TU
         router.post('/sets/:SID/tossups/duplicate', sets.set.tossups.duplicate); //mark dupes
         router.delete('/sets/:SID/tossups/:TID', sets.set.tossups.remove); //remove TU
+        
+        router.post('/sets/:SID/tossups/:TID/approve', sets.set.tossups.approve); //approve TU
+        router.post('/sets/:SID/tossups/:TID/disapprove', sets.set.tossups.disapprove); //disapprove TU
         
         router.post('/sets/:SID/tossups/:TID/message', sets.set.tossups.message.create); //add message to TU
         router.post('/sets/:SID/tossups/:TID/message/:MID/resolve', sets.set.tossups.message.resolve); //resolve message
@@ -66,9 +68,11 @@ var router = express.Router();
         router.get('/sets/:SID/bonuses/:BID', sets.set.bonuses.get); //get specific BN
         router.post('/sets/:SID/bonuses', sets.set.bonuses.create); //create new BN
         router.put('/sets/:SID/bonuses/:BID', sets.set.bonuses.edit); //edit existing BN
-        router.post('/sets/:SID/bonuses/:BID/approve', sets.set.bonuses.approve); //approve BN
         router.post('/sets/:SID/bonuses/duplicate', sets.set.bonuses.duplicate); //mark dupes
         router.delete('/sets/:SID/bonuses/:BID', sets.set.bonuses.remove); //remove BN
+        
+        router.post('/sets/:SID/bonuses/:BID/approve', sets.set.bonuses.approve); //approve BN
+        router.post('/sets/:SID/bonuses/:BID/disapprove', sets.set.bonuses.disapprove); //disapprove BN
         
         router.post('/sets/:SID/bonuses/:BID/message', sets.set.bonuses.message.create); //add message to BN
         router.post('/sets/:SID/bonuses/:BID/message/:MID/resolve', sets.set.bonuses.message.resolve); //resolve message

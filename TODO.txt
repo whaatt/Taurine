@@ -66,17 +66,17 @@ Database (ID is actually _id):
 - Users
     {ID, username, password, temporary, email, name, confirmed, confirmID} 
 - Sets
-    {ID, name, password, info, creationDate, targetDate, directorID, subjects, config, schema, visibility}
+    {ID, name, password, info, creationDate, targetDate, directorID, subjects, config, schema, visibility, packets}
 - Subjects
     {ID, setID, subject, countTU, countB}
 - Permissions
     {ID, setID, userID, role, focus, editsTU, editsB}
 - Tossups
-    {ID, setID, subjectID, difficulty, question, answer, approved, approvedByID, duplicates}
+    {ID, setID, subjectID, creatorID, difficulty, question, answer, approved, approvedByID, lastEditedByID, packet}
 - Bonuses
-    {ID, setID, subjectID, difficulty, lead, questions, answers, approved, approvedByID}
+    {ID, setID, subjectID, creatorID, difficulty, lead, questions, answers, approved, approvedByID, lastEditedByID, packet}
 - Messages
-    {ID, userID, type, setID, questionType, questionID, message, date}
+    {ID, userID, type, setID, questionType, questionID, message, date, resolved}
 - Notifications
     {ID, type, setID, questionType, questionID, userID, ownerID, read}
 - Counters

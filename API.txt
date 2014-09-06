@@ -234,22 +234,23 @@ DELETE /api/user/notifications/:NID
         - notification does not exist or is not yours - errors : [noSuchNotification]
     
 GET /api/sets/:SID/tossups
-    about: get a summary list of tossups (ID/answer/difficulty/approved/duplicate/creator/editor)
+    about: get a summary list of tossups (ID/answer/difficulty/approved/creatorName/creatorUsername)
     in: {}
-    data: {<default>, data: [tossupInfo]}
+    data: {<default>, data: [tossups : [tossupInfo...]]}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
 
 GET /api/sets/:SID/tossups/:TID
-    about: get a specific tossup
+    about: get a specific tossup (subjectID/subjectName/creatorID/creatorName/creatorUsername/difficulty/question/answer/approved/approvedByID/approvedByName/approvedByUsername/lastEditedByID/lastEditedByName/lastEditedByUsername/messages[ID/senderID/senderName/senderUsername/type/message/date/resolved])
     in: {}
-    data: {<default>, data: {tossupInfo}}
+    data: {<default>, data: {tossup : tossupInfo}}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - tossup does not exist - errors : [noSuchTossup]
+    behaviors:
+        - missing parameters will return null
         
 POST /api/sets/:SID/tossups
     about: create tossups for a given set
@@ -277,17 +278,32 @@ DELETE /api/sets/:SID/tossups/:TID
     in: {}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
-        - not creator of question
-        - not editor or administrator
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - tossup does not exist - errors : [noSuchTossup]
+        - not creator, appropriate editor, or administrator - [noPermsAction]
 
 POST /api/sets/:SID/tossups/:TID/approve
     about: approve a given tossup
     in: {}
     data: {<default>}
-    error: TBD
+    error:
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - tossup does not exist - errors : [noSuchTossup]
+        - not appropriate editor or administrator - [noPermsAction]
+        - outstanding issues not marked resolved - [issuesExist]
+    
+POST /api/sets/:SID/tossups/:TID/disapprove
+    about: disapprove a given tossup
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - tossup does not exist - errors : [noSuchTossup]
+        - not appropriate editor or administrator - [noPermsAction]
+        - currently assigned to a packet - [currentlyAssigned]
 
 POST /api/sets/:SID/tossups/duplicate
     about: leave a message saying that multiple tossups are duplicated
@@ -326,22 +342,23 @@ DELETE /api/sets/:SID/tossups/:TID/message/:MID
         - not editor or administrator
 
 GET /api/sets/:SID/bonuses
-    about: get a list of bonuses (ID/lead/<questions>/answers/difficulty/approved/duplicate/creator/editor/flagState)
+    about: get a list of bonuses (ID/answers/difficulty/approved/creatorName/creatorUsername)
     in: {}
-    data: {<default>, data: [bonusInfo]}
+    data: {<default>, data: [bonuses : [bonusInfo...]]}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
-
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        
 GET /api/sets/:SID/bonuses/:BID
-    about: get a specific bonus
+    about: get a specific bonus (subjectID/subjectName/creatorID/creatorName/creatorUsername/difficulty/questions/answers/approved/approvedByID/approvedByName/approvedByUsername/lastEditedByID/lastEditedByName/lastEditedByUsername/messages[ID/senderID/senderName/senderUsername/type/message/date/resolved])
     in: {}
-    data: {<default>, data: {bonusInfo}}
+    data: {<default>, data: {bonus : bonusInfo}}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - bonus does not exist - errors : [noSuchBonus]
+    behaviors:
+        - missing parameters will return null
         
 POST /api/sets/:SID/bonuses
     about: create bonuses for a given set
@@ -371,18 +388,33 @@ DELETE /api/sets/:SID/bonuses/:BID
     in: {}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
-        - not creator of question
-        - not editor or administrator
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - bonus does not exist - errors : [noSuchBonus]
+        - not creator, appropriate editor, or administrator - [noPermsAction]
 
 POST /api/sets/:SID/bonuses/:BID/approve
     about: approve a given bonus
     in: {}
     data: {<default>}
-    error: TBD
-
+    error:
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - bonus does not exist - errors : [noSuchBonus]
+        - not appropriate editor or administrator - [noPermsAction]
+        - outstanding issues not marked resolved - [issuesExist]
+    
+POST /api/sets/:SID/bonuses/:BID/disapprove
+    about: disapprove a given bonus
+    in: {}
+    data: {<default>}
+    error:
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - bonus does not exist - errors : [noSuchBonus]
+        - not appropriate editor or administrator - [noPermsAction]
+        - currently assigned to a packet - [currentlyAssigned]
+    
 POST /api/sets/:SID/bonuses/duplicate
     about: leave a message saying that multiple bonuses are duplicated
     in: {bonuses : [BID...]}
