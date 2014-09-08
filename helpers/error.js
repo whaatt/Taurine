@@ -24,6 +24,7 @@ module.exports = {
     noSuchConfirm : 'noSuchConfirm', //confirmation ID does not exist
     noSuchCreds : 'noSuchCreds', //given credentials do not match anything
     noSuchMember : 'noSuchMember', //given member does not exist in set
+    noSuchMessage : 'noSuchMessage', //given message does not exist
     noSuchNotification : 'noSuchNotification', //notification was invalid
     noSuchSet : 'noSuchSet', //given set ID does not exist in DB
     noSuchSubject : 'noSuchSubject', //specified subject is not accessible

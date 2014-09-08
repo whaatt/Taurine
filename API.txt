@@ -309,37 +309,48 @@ POST /api/sets/:SID/tossups/duplicate
     about: leave a message saying that multiple tossups are duplicated
     in: {tossups : [TID...]}
     data: {<default>}
-    error: TBD
+    error:
+        - not authenticated - errors : [notLoggedIn]
+        - missing parameters - errors : [missingParams]
+        - if tossups is not array - errors : [parameter] + param
+        - no permissions or set is invalid - errors : [noPerms]
+        - tossup does not exist - errors : [noSuchTossup]
     
 POST /api/sets/:SID/tossups/:TID/message
     about: leave a message and notify users with flags
-    in: {message}
-    data: {<default>}
+    in: {message, type}
+    data: {<default>, data : {transformed <sanitized message>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
+        - not authenticated - errors : [notLoggedIn]
+        - missing parameters - errors : [missingParams]
+        - blank message - errors : [blank] + param
+        - message longer than 10000 chars - errors : [length] + param
+        - type invalid - errors : [parameter] + param
+        - no permissions or set is invalid - errors : [noPerms]
+        - tossup does not exist - errors : [noSuchTossup]
+        - if type is issue and currently assigned to a packet - [currentlyAssigned]
 
 POST /api/sets/:SID/tossups/:TID/message/:MID/resolve
     about: resolve an issue message
     in: {}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
-        - etc...
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - tossup does not exist - errors : [noSuchTossup]
+        - not appropriate editor or administrator - [noPermsAction]
+        - message does not exist - errors : [noSuchMessage]
         
 DELETE /api/sets/:SID/tossups/:TID/message/:MID
     about: delete a message
     in: {}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
-        - [not creator of question]?
-        - not editor or administrator
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - tossup does not exist - errors : [noSuchTossup]
+        - not creator, appropriate editor, or administrator - [noPermsAction]
+        - message does not exist - errors : [noSuchMessage]
 
 GET /api/sets/:SID/bonuses
     about: get a list of bonuses (ID/answers/difficulty/approved/creatorName/creatorUsername)
@@ -419,37 +430,48 @@ POST /api/sets/:SID/bonuses/duplicate
     about: leave a message saying that multiple bonuses are duplicated
     in: {bonuses : [BID...]}
     data: {<default>}
-    error: TBD
+    error:
+        - not authenticated - errors : [notLoggedIn]
+        - missing parameters - errors : [missingParams]
+        - if bonuses is not array - errors : [parameter] + param
+        - no permissions or set is invalid - errors : [noPerms]
+        - bonus does not exist - errors : [noSuchBonus]
     
 POST /api/sets/:SID/bonuses/:BID/message
     about: leave a message and notify users with flags
-    in: {message}
-    data: {<default>}
+    in: {message, type}
+    data: {<default>, data : {transformed <sanitized message>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
+        - not authenticated - errors : [notLoggedIn]
+        - missing parameters - errors : [missingParams]
+        - blank message - errors : [blank] + param
+        - message longer than 10000 chars - errors : [length] + param
+        - type invalid - errors : [parameter] + param
+        - no permissions or set is invalid - errors : [noPerms]
+        - bonus does not exist - errors : [noSuchBonus]
+        - if type is issue and currently assigned to a packet - [currentlyAssigned]
 
 POST /api/sets/:SID/bonuses/:BID/message/:MID/resolve
     about: resolve an issue message
     in: {}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
-        - etc...
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - bonus does not exist - errors : [noSuchBonus]
+        - not appropriate editor or administrator - [noPermsAction]
+        - message does not exist - errors : [noSuchMessage]
         
 DELETE /api/sets/:SID/bonuses/:BID/message/:MID
     about: delete a message
     in: {}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
-        - [not creator of question]?
-        - not editor or administrator
+        - not authenticated - errors : [notLoggedIn]
+        - no permissions or set is invalid - errors : [noPerms]
+        - bonus does not exist - errors : [noSuchBonus]
+        - not creator, appropriate editor, or administrator - [noPermsAction]
+        - message does not exist - errors : [noSuchMessage]
 
 POST /api/sets/:SID/packets
     about: generate packets

@@ -78,5 +78,5 @@ Database (ID is actually _id):
 - Messages
     {ID, userID, type, setID, questionType, questionID, message, date, resolved}
 - Notifications
-    {ID, type, setID, questionType, questionID, userID, ownerID, read}
+    {ID, type, setID, questionType, questionID, ownerID, senderID, userID, read}
 - Counters

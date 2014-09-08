@@ -1,5 +1,7 @@
 //load all the external modules once
 var helpers = require('../../helpers/index');
+var packInfo = require('../../package.json');
+var clean = require('sanitize-html'); //yay
 var moment = require('moment'); //datetime
 var async = require('async'); //argh
 var tools = require('underscore');
@@ -301,9 +303,29 @@ module.exports = {
                                         approvedByID : UID
                                     };
                             
-                                    DB.bonuses.update({'_id' : BID}, {$set : newState}, {}, function(err, num) {
+                                    var newNotif = {
+                                        '_id' : null,
+                                        type : 'approve',
+                                        setID : SID,
+                                        questionType : 'bonus',
+                                        questionID : BID,
+                                        userID : doc['_id'],
+                                        ownerID : doc['_id'],
+                                        senderID : UID
+                                    };
+                                    
+                                    DB.getNewID('notifications', function(err, newID) {
                                         if (err) { console.log(err); throw err; }
-                                        res.status(200).send(response(true, {}));
+                                        newNotif['_id'] = newID;
+                                        
+                                        DB.notifications.insert(newNotif, function(err, doc) {
+                                            if (err) { console.log(err); throw err; }
+                                            
+                                            DB.bonuses.update({'_id' : BID}, {$set : newState}, {}, function(err, num) {
+                                                if (err) { console.log(err); throw err; }
+                                                res.status(200).send(response(true, {}));
+                                            });
+                                        });
                                     });
                                 }
                                 
@@ -373,7 +395,7 @@ module.exports = {
                                 approved : false,
                                 approvedByID : null
                             };
-                    
+                            
                             DB.bonuses.update({'_id' : BID}, {$set : newState}, {}, function(err, num) {
                                 if (err) { console.log(err); throw err; }
                                 res.status(200).send(response(true, {}));
@@ -386,21 +408,422 @@ module.exports = {
     },
     
     duplicate : function(req, res) {
-    
+        if (req.session.authorized !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.notLoggedIn]
+            })); return false;
+        }
+        
+        if (!('bonuses' in req.body)) {
+            res.status(200).send(response(false, {
+                errors : [error.missingParams]
+            })); return false;
+        }
+        
+        if (Array.isArray(req.body.bonuses) !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.parameter],
+                errorParams : ['bonuses']
+            })); return false;
+        }
+        
+        var UID = req.session.ID;
+        var SID = parseInt(req.params.SID);
+        var bonuses = req.body.bonuses;
+        
+        DB.permissions.findOne({userID : UID, setID : SID}, function(err, doc) {
+            if (err) { console.log(err); throw err; }
+            
+            else if (doc === null) {
+                res.status(200).send(response(false, {
+                    errors : [error.noPerms]
+                })); return false;
+            }
+            
+            else {
+                async.eachSeries(bonuses, function(bonus, next) {
+                    DB.bonuses.find({'_id' : bonus, setID : SID}, function(err, doc) {
+                        if (err) { console.log(err); throw err; }
+                        
+                        else if (doc === null) {
+                            res.status(200).send(response(false, {
+                                errors : [error.noSuchBonus]
+                            })); return false;
+                        }
+                        
+                        else {
+                            next();
+                        }
+                    });
+                }, function() {
+                    async.eachSeries(bonuses, function(bonus, next) {
+                        var others = tools.without(bonuses, bonus);
+                        var message = 'This bonus is a known duplicate of ID numbers';
+                        
+                        for (var i = 0; i < others.length; i++) {
+                            if (i === others.length - 1) message += ', and';
+                            else if (i > 0) message += ',';
+                            
+                            message += ' <a href="' + packInfo.root + '/set/'
+                                + SID.toString() + '/bonus/' + bonus.toString()
+                                + '">' + bonus.toString() + '</a>'
+                        }
+                        
+                        message += '. Please resolve these conflicts.';
+                        var newMessage = {
+                            '_id' : null,
+                            userID : UID,
+                            type : 'issue',
+                            setID : SID,
+                            questionType : 'bonus',
+                            questionID : bonus,
+                            message : message,
+                            date : moment().format('YYYY-MM-DD HH:mm:ss'),
+                            resolved : false
+                        }
+                        
+                        DB.getNewID('messages', function(err, MID) {
+                            newMessage['_id'] = MID;
+                            DB.messages.insert(newMessage, function(err, doc) {
+                                if (err) { console.log(err); throw err; }
+                                next();
+                            });
+                        });
+                    }, function() {
+                        res.status(200).send(response(true, {}));
+                    });
+                });
+            }
+        });
     },
     
     message : {
     
         create : function(req, res) {
+            if (req.session.authorized !== true) {
+                res.status(200).send(response(false, {
+                    errors : [error.notLoggedIn]
+                })); return false;
+            }
+            
+            if ((!('message' in req.body)) ||
+                (!('type' in req.body))) {
+                res.status(200).send(response(false, {
+                    errors : [error.missingParams]
+                })); return false;
+            }
+            
+            var message = req.body.message;
+            var type = req.body.type;
+            
+            if (message === '') {
+                res.status(200).send(response(false, {
+                    errors : [error.blank],
+                    errorParams : ['message']
+                })); return false;
+            }
+            
+            if (!validate.isLength(message, 1, 10000)) {
+                res.status(200).send(response(false, {
+                    errors : [error.length],
+                    errorParams : ['message']
+                })); return false;
+            }
+            
+            if (['comment', 'issue'].indexOf(type) === -1) {
+                res.status(200).send(response(false, {
+                    errors : [error.parameter],
+                    errorParams : ['type']
+                })); return false;
+            }
+            
+            var UID = req.session.ID;
+            var SID = parseInt(req.params.SID);
+            var BID = parseInt(req.params.BID);
+            
+            DB.permissions.findOne({userID : UID, setID : SID}, function(err, doc) {
+                if (err) { console.log(err); throw err; }
+                
+                else if (doc === null) {
+                    res.status(200).send(response(false, {
+                        errors : [error.noPerms]
+                    })); return false;
+                }
+                
+                else {
+                    DB.bonuses.findOne({'_id' : BID, setID : SID}, function(err, doc) {
+                        if (err) { console.log(err); throw err; }
         
+                        else if (doc === null) {
+                            res.status(200).send(response(false, {
+                                errors : [error.noSuchBonus]
+                            })); return false;
+                        }
+                        
+                        else if (doc.packet !== null && type === 'issue') {
+                            res.status(200).send(response(false, {
+                                errors : [error.currentlyAssigned]
+                            })); return false;
+                        }
+                        
+                        else {
+                            message = clean(message, {
+                                allowedTags: [ 'b', 'i', 'u', 'em', 'strong', 'a' ],
+                                allowedAttributes: { 'a': [ 'href' ] },
+                            });
+                            
+                            var owner = doc.userID;
+                            var notifUsers = [];
+                            var newMessage = {
+                                '_id' : null,
+                                userID : UID,
+                                type : type,
+                                setID : SID,
+                                questionType : 'bonus',
+                                questionID : BID,
+                                message : message,
+                                date : moment().format('YYYY-MM-DD HH:mm:ss'),
+                                resolved : type === 'issue' ? false : true
+                            }
+                            
+                            async.waterfall([
+                                function(callback) {
+                                    DB.getNewID('messages', function(err, MID) {
+                                        if (err) { console.log(err); throw err; }
+                                        newMessage['_id'] = MID; callback(null);
+                                    });
+                                },
+                                
+                                function(callback) {
+                                    var targetMessage = {
+                                        setID : SID,
+                                        questionType : 'bonus',
+                                        questionID : BID
+                                    }
+                                    
+                                    DB.messages.find(targetMessages, function(err, docs) {
+                                        tools.each(docs, function(message) {
+                                            if (message.userID !== UID) {
+                                                notifUsers.push(message.userID);
+                                            }
+                                        });
+                                        
+                                        //dedupe list of users
+                                        var notifUsers = tools.uniq(notifUsers);
+                                    });
+                                },
+                                
+                                function(callback) {
+                                    DB.messages.insert(newMessage, function(err, doc) {
+                                        if (err) { console.log(err); throw err; }
+                                        callback(null);
+                                    });
+                                },
+                                
+                                function(callback) {
+                                    var newNotif = {
+                                        '_id' : null,
+                                        type : 'message',
+                                        setID : SID,
+                                        questionType : 'bonus',
+                                        questionID : BID,
+                                        userID : owner,
+                                        ownerID : owner,
+                                        senderID : UID
+                                    };
+                                    
+                                    DB.getNewID('notifications', function(err, NID) {
+                                        if (err) { console.log(err); throw err; }
+                                        newNotif['_id'] = NID;
+                                        
+                                        DB.notifications.insert(newNotif, function(err, doc) {
+                                            if (err) { console.log(err); throw err; }
+                                            callback(null);
+                                        });
+                                    });
+                                },
+                                
+                                function(callback) {
+                                    async.eachSeries(notifUsers, function(notifUser, next) {
+                                        var newNotif = {
+                                            '_id' : null,
+                                            type : 'reply',
+                                            setID : SID,
+                                            questionType : 'bonus',
+                                            questionID : BID,
+                                            userID : notifUser,
+                                            ownerID : owner,
+                                            senderID : UID
+                                        };
+                                        
+                                        DB.getNewID('notifications', function(err, NID) {
+                                            if (err) { console.log(err); throw err; }
+                                            newNotif['_id'] = NID;
+                                            
+                                            DB.notifications.insert(newNotif, function(err, doc) {
+                                                if (err) { console.log(err); throw err; }
+                                                next();
+                                            });
+                                        });
+                                    }, function() {
+                                        res.status(200).send(response(true, {transformed : message}));
+                                    });
+                                }
+                            ]);
+                        }
+                    });
+                }
+            });
         },
         
         resolve : function(req, res) {
+            if (req.session.authorized !== true) {
+                res.status(200).send(response(false, {
+                    errors : [error.notLoggedIn]
+                })); return false;
+            }
+            
+            var UID = req.session.ID;
+            var SID = parseInt(req.params.SID);
+            var BID = parseInt(req.params.BID);
+            var MID = parseInt(req.params.MID);
+            
+            DB.permissions.findOne({userID : UID, setID : SID}, function(err, doc) {
+                if (err) { console.log(err); throw err; }
+                
+                else if (doc === null) {
+                    res.status(200).send(response(false, {
+                        errors : [error.noPerms]
+                    })); return false;
+                }
+                
+                else {
+                    var role = doc.role;
+                    var focus = doc.focus;
+                    
+                    DB.bonuses.findOne({'_id' : BID, setID : SID}, function(err, doc) {
+                        if (err) { console.log(err); throw err; }
         
+                        else if (doc === null) {
+                            res.status(200).send(response(false, {
+                                errors : [error.noSuchBonus]
+                            })); return false;
+                        }
+                        
+                        else {
+                            var owner = doc.userID;
+                            if ((!(role === 'Director')) &&
+                                (!(role === 'Administrator')) &&
+                                (!(role === 'Editor' && focus.indexOf(doc.subjectID) !== -1))) {
+                                res.status(200).send(response(false, {
+                                    errors : [error.noPermsAction]
+                                })); return false;                                
+                            }
+                            
+                            DB.messages.findOne({'_id' : MID, setID : SID}, function(err, doc) {
+                                if (err) { console.log(err); throw err; }
+                                
+                                else if (doc === null) {
+                                    res.status(200).send(response(false, {
+                                        errors : [error.noSuchMessage]
+                                    })); return false;
+                                }
+                                
+                                else {
+                                    var messageOwner = doc.userID;
+                                    var resolveMe = {$set : {resolved : true}};
+                                    DB.messages.update({'_id' : MID}, resolveMe, {}, function(err, num) {
+                                        if (err) { console.log(err); throw err; }
+                                        
+                                        var newNotif = {
+                                            '_id' : null,
+                                            type : 'resolve',
+                                            setID : SID,
+                                            questionType : 'bonus',
+                                            questionID : BID,
+                                            userID : messageOwner,
+                                            ownerID : owner,
+                                            senderID : UID
+                                        };
+                                        
+                                        DB.notifications.insert(newNotif, function(err, doc) {
+                                            if (err) { console.log(err); throw err; }
+                                            res.status(200).send(response(true, {}));
+                                        });
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });
         },
 
         remove : function(req, res) {
+            if (req.session.authorized !== true) {
+                res.status(200).send(response(false, {
+                    errors : [error.notLoggedIn]
+                })); return false;
+            }
+            
+            var UID = req.session.ID;
+            var SID = parseInt(req.params.SID);
+            var BID = parseInt(req.params.BID);
+            var MID = parseInt(req.params.MID);
+            
+            DB.permissions.findOne({userID : UID, setID : SID}, function(err, doc) {
+                if (err) { console.log(err); throw err; }
+                
+                else if (doc === null) {
+                    res.status(200).send(response(false, {
+                        errors : [error.noPerms]
+                    })); return false;
+                }
+                
+                else {
+                    var role = doc.role;
+                    var focus = doc.focus;
+                    
+                    DB.bonuses.findOne({'_id' : BID, setID : SID}, function(err, doc) {
+                        if (err) { console.log(err); throw err; }
         
+                        else if (doc === null) {
+                            res.status(200).send(response(false, {
+                                errors : [error.noSuchBonus]
+                            })); return false;
+                        }
+                        
+                        else {
+                            var owner = doc.userID;
+                            if ((!(owner === UID)) &&
+                                (!(role === 'Director')) &&
+                                (!(role === 'Administrator')) &&
+                                (!(role === 'Editor' && focus.indexOf(doc.subjectID) !== -1))) {
+                                res.status(200).send(response(false, {
+                                    errors : [error.noPermsAction]
+                                })); return false;                                
+                            }
+                            
+                            DB.messages.findOne({'_id' : MID, setID : SID}, function(err, doc) {
+                                if (err) { console.log(err); throw err; }
+                                
+                                else if (doc === null) {
+                                    res.status(200).send(response(false, {
+                                        errors : [error.noSuchMessage]
+                                    })); return false;
+                                }
+                                
+                                else {
+                                    DB.messages.remove({'_id' : MID}, {}, function(err, num) {
+                                        if (err) { console.log(err); throw err; }
+                                        res.status(200).send(response(true, {}));
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
+            });        
         }
         
     }
