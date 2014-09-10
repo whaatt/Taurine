@@ -257,21 +257,28 @@ POST /api/sets/:SID/tossups
     in: {subject, difficulty, question, answer}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
+        - not authenticated - errors : [notLoggedIn]
+        - missing parameters - errors : [missingParams]
+        - invalid difficulty - errors : [parameter] + param
+        - question is too long (> 5000) - errors : [length] + param
+        - answer is too long (> 1000) - errors : [length] + param
+        - no permissions or set is invalid - errors : [noPerms]
+        - subject does not exist - errors : [noSuchSubject]
 
 PUT /api/sets/:SID/tossups/:TID
     about: edit a given tossup
-    in: {subject, difficulty, question, answer, approved, duplicate}
+    in: {<subject>, <difficulty>, <question>, <answer>}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
-        - not creator of question
-        - not editor or administrator
-        - not ed or admin and approving
+        - not authenticated - errors : [notLoggedIn]
+        - invalid difficulty - errors : [parameter] + param
+        - question is too long (> 5000) - errors : [length] + param
+        - answer is too long (> 1000) - errors : [length] + param
+        - no permissions or set is invalid - errors : [noPerms]
+        - subject does not exist - errors : [noSuchSubject]
+        - tossup does not exist - errors : [noSuchTossup]
+        - not creator, appropriate editor, or administrator - errors : [noPermsAction]
+        - currently assigned to a packet - errors : [currentlyAssigned]
 
 DELETE /api/sets/:SID/tossups/:TID
     about: delete a given tossup
@@ -281,7 +288,7 @@ DELETE /api/sets/:SID/tossups/:TID
         - not authenticated - errors : [notLoggedIn]
         - no permissions or set is invalid - errors : [noPerms]
         - tossup does not exist - errors : [noSuchTossup]
-        - not creator, appropriate editor, or administrator - [noPermsAction]
+        - not creator, appropriate editor, or administrator - errors : [noPermsAction]
 
 POST /api/sets/:SID/tossups/:TID/approve
     about: approve a given tossup
@@ -291,8 +298,8 @@ POST /api/sets/:SID/tossups/:TID/approve
         - not authenticated - errors : [notLoggedIn]
         - no permissions or set is invalid - errors : [noPerms]
         - tossup does not exist - errors : [noSuchTossup]
-        - not appropriate editor or administrator - [noPermsAction]
-        - outstanding issues not marked resolved - [issuesExist]
+        - not appropriate editor or administrator - errors : [noPermsAction]
+        - outstanding issues not marked resolved - errors : [issuesExist]
     
 POST /api/sets/:SID/tossups/:TID/disapprove
     about: disapprove a given tossup
@@ -302,8 +309,8 @@ POST /api/sets/:SID/tossups/:TID/disapprove
         - not authenticated - errors : [notLoggedIn]
         - no permissions or set is invalid - errors : [noPerms]
         - tossup does not exist - errors : [noSuchTossup]
-        - not appropriate editor or administrator - [noPermsAction]
-        - currently assigned to a packet - [currentlyAssigned]
+        - not appropriate editor or administrator - errors : [noPermsAction]
+        - currently assigned to a packet - errors : [currentlyAssigned]
 
 POST /api/sets/:SID/tossups/duplicate
     about: leave a message saying that multiple tossups are duplicated
@@ -328,7 +335,7 @@ POST /api/sets/:SID/tossups/:TID/message
         - type invalid - errors : [parameter] + param
         - no permissions or set is invalid - errors : [noPerms]
         - tossup does not exist - errors : [noSuchTossup]
-        - if type is issue and currently assigned to a packet - [currentlyAssigned]
+        - if type is issue and currently assigned to a packet - errors : [currentlyAssigned]
 
 POST /api/sets/:SID/tossups/:TID/message/:MID/resolve
     about: resolve an issue message
@@ -338,7 +345,7 @@ POST /api/sets/:SID/tossups/:TID/message/:MID/resolve
         - not authenticated - errors : [notLoggedIn]
         - no permissions or set is invalid - errors : [noPerms]
         - tossup does not exist - errors : [noSuchTossup]
-        - not appropriate editor or administrator - [noPermsAction]
+        - not appropriate editor or administrator - errors : [noPermsAction]
         - message does not exist - errors : [noSuchMessage]
         
 DELETE /api/sets/:SID/tossups/:TID/message/:MID
@@ -349,7 +356,7 @@ DELETE /api/sets/:SID/tossups/:TID/message/:MID
         - not authenticated - errors : [notLoggedIn]
         - no permissions or set is invalid - errors : [noPerms]
         - tossup does not exist - errors : [noSuchTossup]
-        - not creator, appropriate editor, or administrator - [noPermsAction]
+        - not creator, appropriate editor, or administrator - errors : [noPermsAction]
         - message does not exist - errors : [noSuchMessage]
 
 GET /api/sets/:SID/bonuses
@@ -373,26 +380,37 @@ GET /api/sets/:SID/bonuses/:BID
         
 POST /api/sets/:SID/bonuses
     about: create bonuses for a given set
-    in: {subject, difficulty, lead, questions : [question...], answers : [answer...]}
+    in: {subject, difficulty, lead, questions : [question...], answer : [answer...]}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
-        - contains fields erroneous to schema
+        - not authenticated - errors : [notLoggedIn]
+        - missing parameters - errors : [missingParams]
+        - invalid difficulty - errors : [parameter] + param
+        - invalid questions array - errors : [parameter] + param
+        - invalid answers array - errors : [parameter] + param
+        - a question is too long (> 5000) - errors : [length] + param
+        - an answer is too long (> 1000) - errors : [length] + param
+        - the lead is too long (> 1000) - errors : [length] + param
+        - no permissions or set is invalid - errors : [noPerms]
+        - subject does not exist - errors : [noSuchSubject]
 
 PUT /api/sets/:SID/bonuses/:BID
     about: edit a given bonus
-    in: {subject, difficulty, lead, questions : [question...], answers : [answer...], approved, duplicate}
+    in: {<subject>, <difficulty>, <lead>, <questions>, <answers>}
     data: {<default>}
     error:
-        - not authenticated
-        - set does not exist
-        - no permissions for set
-        - not creator of question
-        - not editor or administrator
-        - not ed or admin and approving
-        - contains fields erroneous to schema
+        - not authenticated - errors : [notLoggedIn]
+        - invalid difficulty - errors : [parameter] + param
+        - invalid questions array - errors : [parameter] + param
+        - invalid answers array - errors : [parameter] + param
+        - a question is too long (> 5000) - errors : [length] + param
+        - an answer is too long (> 1000) - errors : [length] + param
+        - the lead is too long (> 1000) - errors : [length] + param
+        - no permissions or set is invalid - errors : [noPerms]
+        - subject does not exist - errors : [noSuchSubject]
+        - bonus does not exist - errors : [noSuchBonus]
+        - not creator, appropriate editor, or administrator - errors : [noPermsAction]
+        - currently assigned to a packet - errors : [currentlyAssigned]
 
 DELETE /api/sets/:SID/bonuses/:BID
     about: delete a given bonus
@@ -402,7 +420,7 @@ DELETE /api/sets/:SID/bonuses/:BID
         - not authenticated - errors : [notLoggedIn]
         - no permissions or set is invalid - errors : [noPerms]
         - bonus does not exist - errors : [noSuchBonus]
-        - not creator, appropriate editor, or administrator - [noPermsAction]
+        - not creator, appropriate editor, or administrator - errors : [noPermsAction]
 
 POST /api/sets/:SID/bonuses/:BID/approve
     about: approve a given bonus
@@ -412,8 +430,8 @@ POST /api/sets/:SID/bonuses/:BID/approve
         - not authenticated - errors : [notLoggedIn]
         - no permissions or set is invalid - errors : [noPerms]
         - bonus does not exist - errors : [noSuchBonus]
-        - not appropriate editor or administrator - [noPermsAction]
-        - outstanding issues not marked resolved - [issuesExist]
+        - not appropriate editor or administrator - errors : [noPermsAction]
+        - outstanding issues not marked resolved - errors : [issuesExist]
     
 POST /api/sets/:SID/bonuses/:BID/disapprove
     about: disapprove a given bonus
@@ -423,8 +441,8 @@ POST /api/sets/:SID/bonuses/:BID/disapprove
         - not authenticated - errors : [notLoggedIn]
         - no permissions or set is invalid - errors : [noPerms]
         - bonus does not exist - errors : [noSuchBonus]
-        - not appropriate editor or administrator - [noPermsAction]
-        - currently assigned to a packet - [currentlyAssigned]
+        - not appropriate editor or administrator - errors : [noPermsAction]
+        - currently assigned to a packet - errors : [currentlyAssigned]
     
 POST /api/sets/:SID/bonuses/duplicate
     about: leave a message saying that multiple bonuses are duplicated
@@ -449,7 +467,7 @@ POST /api/sets/:SID/bonuses/:BID/message
         - type invalid - errors : [parameter] + param
         - no permissions or set is invalid - errors : [noPerms]
         - bonus does not exist - errors : [noSuchBonus]
-        - if type is issue and currently assigned to a packet - [currentlyAssigned]
+        - if type is issue and currently assigned to a packet - errors : [currentlyAssigned]
 
 POST /api/sets/:SID/bonuses/:BID/message/:MID/resolve
     about: resolve an issue message
@@ -459,7 +477,7 @@ POST /api/sets/:SID/bonuses/:BID/message/:MID/resolve
         - not authenticated - errors : [notLoggedIn]
         - no permissions or set is invalid - errors : [noPerms]
         - bonus does not exist - errors : [noSuchBonus]
-        - not appropriate editor or administrator - [noPermsAction]
+        - not appropriate editor or administrator - errors : [noPermsAction]
         - message does not exist - errors : [noSuchMessage]
         
 DELETE /api/sets/:SID/bonuses/:BID/message/:MID
@@ -470,7 +488,7 @@ DELETE /api/sets/:SID/bonuses/:BID/message/:MID
         - not authenticated - errors : [notLoggedIn]
         - no permissions or set is invalid - errors : [noPerms]
         - bonus does not exist - errors : [noSuchBonus]
-        - not creator, appropriate editor, or administrator - [noPermsAction]
+        - not creator, appropriate editor, or administrator - errors : [noPermsAction]
         - message does not exist - errors : [noSuchMessage]
 
 POST /api/sets/:SID/packets

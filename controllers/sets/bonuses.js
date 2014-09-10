@@ -182,11 +182,306 @@ module.exports = {
     },
     
     create : function(req, res) {
-    
+        if (req.session.authorized !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.notLoggedIn]
+            })); return false;
+        }
+        
+        if (!('subject' in req.body) &&
+            !('difficulty' in req.body) &&
+            !('lead' in req.body) &&
+            !('questions' in req.body) &&
+            !('answers' in req.body)) {
+            res.status(200).send(response(false, {
+                errors : [error.missingParams]
+            })); return false;
+        }
+        
+        if (['Easy', 'Medium', 'Hard'].indexOf(req.body.difficulty) === -1) {
+            res.status(200).send(response(false, {
+                errors : [error.parameter],
+                errorParams : ['difficulty']
+            })); return false;
+        }
+        
+        if (Array.isArray(req.body.questions) !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.parameter],
+                errorParams : ['questions']
+            })); return false;
+        }
+        
+        if (Array.isArray(req.body.answers) !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.parameter],
+                errorParams : ['answers']
+            })); return false;
+        }
+        
+        for (var i = 0; i < req.body.questions.length; i++) {
+            if (!validate.isLength(req.body.questions[i], 0, 5000)) {
+                res.status(200).send(response(false, {
+                    errors : [error.length],
+                    errorParams : ['question']
+                })); return false;
+            }
+        }
+        
+        for (var i = 0; i < req.body.answers.length; i++) {
+            if (!validate.isLength(req.body.answers[i], 0, 5000)) {
+                res.status(200).send(response(false, {
+                    errors : [error.length],
+                    errorParams : ['answer']
+                })); return false;
+            }
+        }
+        
+        if (!validate.isLength(req.body.lead, 0, 1000)) {
+            res.status(200).send(response(false, {
+                errors : [error.length],
+                errorParams : ['lead']
+            })); return false;
+        }
+        
+        var UID = req.session.ID;
+        var SID = parseInt(req.params.SID);
+        
+        var subject = req.body.subject;
+        var difficulty = req.body.difficulty;
+        var questions = req.body.questions;
+        var answers = req.body.answers;
+        var lead = req.body.lead;
+        
+        DB.permissions.findOne({userID : UID, setID : SID}, function(err, doc) {
+            if (err) { console.log(err); throw err; }
+            
+            else if (doc === null) {
+                res.status(200).send(response(false, {
+                    errors : [error.noPerms]
+                })); return false;
+            }
+            
+            else {
+                DB.subjects.findOne({'_id' : subject, setID : SID}, function(err, doc) {
+                    if (err) { console.log(err); throw err; }
+            
+                    else if (doc === null) {
+                        res.status(200).send(response(false, {
+                            errors : [error.noSuchSubject]
+                        })); return false;
+                    }
+                    
+                    else {
+                        var newBonus = {
+                            '_id' : null,
+                            setID : SID,
+                            subjectID : subject,
+                            creatorID : UID,
+                            difficulty : difficulty,
+                            lead : lead,
+                            questions : questions,
+                            answers : answers,
+                            approved : false,
+                            approvedByID : null,
+                            lastEditedByID : null,
+                            packet : null
+                        };
+                        
+                        DB.getNewID('bonuses', function(err, BID) {
+                            if (err) { console.log(err); throw err; }
+                            newBonus['_id'] = BID;
+                            
+                            DB.bonuses.insert(newBonus, function(err, doc) {
+                                if (err) { console.log(err); throw err; }
+                                res.status(200).send(response(true, {}));
+                            });
+                        });
+                    }
+                });
+            }
+        });
     },
     
     edit : function(req, res) {
-    
+        if (req.session.authorized !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.notLoggedIn]
+            })); return false;
+        }
+        
+        //to be set in DB
+        var updateBonus = {};
+        
+        if ('difficulty' in req.body) {
+            if (['Easy', 'Medium', 'Hard'].indexOf(req.body.difficulty) !== -1) {
+                updateBonus.difficulty = req.body.difficulty;
+            }
+            
+            else {
+                res.status(200).send(response(false, {
+                    errors : [error.parameter],
+                    errorParams : ['difficulty']
+                })); return false;
+            }
+        }
+        
+        if ('questions' in req.body) {
+            if (Array.isArray(req.body.questions) !== true) {
+                res.status(200).send(response(false, {
+                    errors : [error.parameter],
+                    errorParams : ['questions']
+                })); return false;
+            }
+            
+            else {
+                for (var i = 0; i < req.body.questions.length; i++) {
+                    if (!validate.isLength(req.body.questions[i], 0, 5000)) {
+                        res.status(200).send(response(false, {
+                            errors : [error.length],
+                            errorParams : ['question']
+                        })); return false;
+                    }
+                }
+                
+                updateBonus.questions = req.body.questions;
+            }
+        }
+        
+        if ('answers' in req.body) {
+            if (Array.isArray(req.body.answers) !== true) {
+                res.status(200).send(response(false, {
+                    errors : [error.parameter],
+                    errorParams : ['answers']
+                })); return false;
+            }
+            
+            else {
+                for (var i = 0; i < req.body.answers.length; i++) {
+                    if (!validate.isLength(req.body.answers[i], 0, 1000)) {
+                        res.status(200).send(response(false, {
+                            errors : [error.length],
+                            errorParams : ['answer']
+                        })); return false;
+                    }
+                }
+                
+                updateBonus.answers = req.body.answers;
+            }
+        }
+        
+        if ('lead' in req.body) {
+            if (!validate.isLength(req.body.lead, 0, 1000)) {
+                res.status(200).send(response(false, {
+                    errors : [error.length],
+                    errorParams : ['lead']
+                })); return false;
+            }
+            
+            else {
+                updateBonus.lead = req.body.lead;
+            }
+        }
+        
+        var UID = req.session.ID;
+        var SID = parseInt(req.params.SID);
+        var BID = parseInt(req.params.BID);
+        
+        DB.permissions.findOne({userID : UID, setID : SID}, function(err, doc) {
+            if (err) { console.log(err); throw err; }
+            
+            else if (doc === null) {
+                res.status(200).send(response(false, {
+                    errors : [error.noPerms]
+                })); return false;
+            }
+            
+            else {
+                var role = doc.role;
+                var focus = doc.focus;
+                
+                async.waterfall([
+                    function(callback) {
+                        if ('subject' in req.body) {
+                            DB.subjects.findOne({'_id' : req.body.subject, setID : SID}, function(err, doc) {
+                                if (err) { console.log(err); throw err; }
+                        
+                                else if (doc === null) {
+                                    res.status(200).send(response(false, {
+                                        errors : [error.noSuchSubject]
+                                    })); return false;
+                                }
+                                
+                                else {
+                                    updateBonus.subject = req.body.subject;
+                                    callback(null);
+                                }
+                            });
+                        }
+                        
+                        else {
+                            callback(null);
+                        }
+                    },
+                    
+                    function(callback) {
+                        DB.bonuses.findOne({'_id' : BID, setID : SID}, function(err, doc) {
+                            if (err) { console.log(err); throw err; }
+            
+                            else if (doc === null) {
+                                res.status(200).send(response(false, {
+                                    errors : [error.noSuchBonus]
+                                })); return false;
+                            }
+                            
+                            else {
+                                if ((!(role === 'Director')) &&
+                                    (!(role === 'Administrator')) &&
+                                    (!(UID === doc.userID)) &&
+                                    (!(role === 'Editor' && focus.indexOf(doc.subjectID) !== -1))) {
+                                    res.status(200).send(response(false, {
+                                        errors : [error.noPermsAction]
+                                    })); return false;                                
+                                }
+                            
+                                else if (doc.packet !== null) {
+                                    res.status(200).send(response(false, {
+                                        errors : [error.currentlyAssigned]
+                                    })); return false; 
+                                }
+                                
+                                else {
+                                    var newNotif = {
+                                        '_id' : null,
+                                        type : 'edit',
+                                        setID : SID,
+                                        questionType : 'bonus',
+                                        questionID : BID,
+                                        userID : doc['_id'],
+                                        ownerID : doc['_id'],
+                                        senderID : UID
+                                    };
+                                    
+                                    DB.getNewID('notifications', function(err, newID) {
+                                        if (err) { console.log(err); throw err; }
+                                        newNotif['_id'] = newID;
+                                        
+                                        DB.notifications.insert(newNotif, function(err, doc) {
+                                            if (err) { console.log(err); throw err; }
+                                
+                                            DB.bonuses.update({'_id' : BID}, {$set : updateBonus}, {}, function(err, num) {
+                                                if (err) { console.log(err); throw err; }
+                                                res.status(200).send(response(true, {}));
+                                            });
+                                        });
+                                    });
+                                }
+                            }
+                        });
+                    }
+                ]);
+            }
+        });
     },
     
     remove : function(req, res) {

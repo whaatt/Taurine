@@ -182,11 +182,247 @@ module.exports = {
     },
     
     create : function(req, res) {
-    
+        if (req.session.authorized !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.notLoggedIn]
+            })); return false;
+        }
+        
+        if (!('subject' in req.body) &&
+            !('difficulty' in req.body) &&
+            !('question' in req.body) &&
+            !('answer' in req.body)) {
+            res.status(200).send(response(false, {
+                errors : [error.missingParams]
+            })); return false;
+        }
+        
+        if (['Easy', 'Medium', 'Hard'].indexOf(req.body.difficulty) === -1) {
+            res.status(200).send(response(false, {
+                errors : [error.parameter],
+                errorParams : ['difficulty']
+            })); return false;
+        }
+        
+        if (!validate.isLength(req.body.question, 0, 5000)) {
+            res.status(200).send(response(false, {
+                errors : [error.length],
+                errorParams : ['question']
+            })); return false;
+        }
+        
+        if (!validate.isLength(req.body.answer, 0, 1000)) {
+            res.status(200).send(response(false, {
+                errors : [error.length],
+                errorParams : ['answer']
+            })); return false;
+        }
+        
+        var UID = req.session.ID;
+        var SID = parseInt(req.params.SID);
+        
+        var subject = req.body.subject;
+        var difficulty = req.body.difficulty;
+        var question = req.body.question;
+        var answer = req.body.answer;
+        
+        DB.permissions.findOne({userID : UID, setID : SID}, function(err, doc) {
+            if (err) { console.log(err); throw err; }
+            
+            else if (doc === null) {
+                res.status(200).send(response(false, {
+                    errors : [error.noPerms]
+                })); return false;
+            }
+            
+            else {
+                DB.subjects.findOne({'_id' : subject, setID : SID}, function(err, doc) {
+                    if (err) { console.log(err); throw err; }
+            
+                    else if (doc === null) {
+                        res.status(200).send(response(false, {
+                            errors : [error.noSuchSubject]
+                        })); return false;
+                    }
+                    
+                    else {
+                        var newTossup = {
+                            '_id' : null,
+                            setID : SID,
+                            subjectID : subject,
+                            creatorID : UID,
+                            difficulty : difficulty,
+                            question : question,
+                            answer : answer,
+                            approved : false,
+                            approvedByID : null,
+                            lastEditedByID : null,
+                            packet : null
+                        };
+                        
+                        DB.getNewID('tossups', function(err, TID) {
+                            if (err) { console.log(err); throw err; }
+                            newTossup['_id'] = TID;
+                            
+                            DB.tossups.insert(newTossup, function(err, doc) {
+                                if (err) { console.log(err); throw err; }
+                                res.status(200).send(response(true, {}));
+                            });
+                        });
+                    }
+                });
+            }
+        });
     },
     
     edit : function(req, res) {
-    
+        if (req.session.authorized !== true) {
+            res.status(200).send(response(false, {
+                errors : [error.notLoggedIn]
+            })); return false;
+        }
+        
+        //to be set in DB
+        var updateTossup = {};
+        
+        if ('difficulty' in req.body) {
+            if (['Easy', 'Medium', 'Hard'].indexOf(req.body.difficulty) !== -1) {
+                updateTossup.difficulty = req.body.difficulty;
+            }
+            
+            else {
+                res.status(200).send(response(false, {
+                    errors : [error.parameter],
+                    errorParams : ['difficulty']
+                })); return false;
+            }
+        }
+        
+        if ('question' in req.body) {
+            if (!validate.isLength(req.body.question, 0, 5000)) {
+                res.status(200).send(response(false, {
+                    errors : [error.length],
+                    errorParams : ['question']
+                })); return false;
+            }
+            
+            else {
+                updateTossup.question = req.body.question;
+            }
+        }
+        
+        if ('answer' in req.body) {
+            if (!validate.isLength(req.body.answer, 0, 5000)) {
+                res.status(200).send(response(false, {
+                    errors : [error.length],
+                    errorParams : ['answer']
+                })); return false;
+            }
+            
+            else {
+                updateTossup.answer = req.body.answer;
+            }
+        }
+        
+        var UID = req.session.ID;
+        var SID = parseInt(req.params.SID);
+        var TID = parseInt(req.params.TID);
+        
+        DB.permissions.findOne({userID : UID, setID : SID}, function(err, doc) {
+            if (err) { console.log(err); throw err; }
+            
+            else if (doc === null) {
+                res.status(200).send(response(false, {
+                    errors : [error.noPerms]
+                })); return false;
+            }
+            
+            else {
+                var role = doc.role;
+                var focus = doc.focus;
+                
+                async.waterfall([
+                    function(callback) {
+                        if ('subject' in req.body) {
+                            DB.subjects.findOne({'_id' : req.body.subject, setID : SID}, function(err, doc) {
+                                if (err) { console.log(err); throw err; }
+                        
+                                else if (doc === null) {
+                                    res.status(200).send(response(false, {
+                                        errors : [error.noSuchSubject]
+                                    })); return false;
+                                }
+                                
+                                else {
+                                    updateTossup.subject = req.body.subject;
+                                    callback(null);
+                                }
+                            });
+                        }
+                        
+                        else {
+                            callback(null);
+                        }
+                    },
+                    
+                    function(callback) {
+                        DB.tossups.findOne({'_id' : TID, setID : SID}, function(err, doc) {
+                            if (err) { console.log(err); throw err; }
+            
+                            else if (doc === null) {
+                                res.status(200).send(response(false, {
+                                    errors : [error.noSuchTossup]
+                                })); return false;
+                            }
+                            
+                            else {
+                                if ((!(role === 'Director')) &&
+                                    (!(role === 'Administrator')) &&
+                                    (!(UID === doc.userID)) &&
+                                    (!(role === 'Editor' && focus.indexOf(doc.subjectID) !== -1))) {
+                                    res.status(200).send(response(false, {
+                                        errors : [error.noPermsAction]
+                                    })); return false;                                
+                                }
+                            
+                                else if (doc.packet !== null) {
+                                    res.status(200).send(response(false, {
+                                        errors : [error.currentlyAssigned]
+                                    })); return false; 
+                                }
+                                
+                                else {
+                                    var newNotif = {
+                                        '_id' : null,
+                                        type : 'edit',
+                                        setID : SID,
+                                        questionType : 'tossup',
+                                        questionID : TID,
+                                        userID : doc['_id'],
+                                        ownerID : doc['_id'],
+                                        senderID : UID
+                                    };
+                                    
+                                    DB.getNewID('notifications', function(err, newID) {
+                                        if (err) { console.log(err); throw err; }
+                                        newNotif['_id'] = newID;
+                                        
+                                        DB.notifications.insert(newNotif, function(err, doc) {
+                                            if (err) { console.log(err); throw err; }
+                                
+                                            DB.tossups.update({'_id' : TID}, {$set : updateTossup}, {}, function(err, num) {
+                                                if (err) { console.log(err); throw err; }
+                                                res.status(200).send(response(true, {}));
+                                            });
+                                        });
+                                    });
+                                }
+                            }
+                        });
+                    }
+                ]);
+            }
+        });
     },
     
     remove : function(req, res) {
